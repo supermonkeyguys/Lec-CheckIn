@@ -1,0 +1,50 @@
+.bottomContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  z-index: 0;
+  :global(.ant-card-body) {
+    padding: auto;
+    width: 100%;
+  }
+}
+
+.bottomCard {
+  width: 50%;
+  flex: 1;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .commonBtn {
+    font-size: 20px;
+    border-radius: 16px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn0 {
+    color: rgba(245, 158, 103);
+    background-color: rgba(254, 245, 230);
+  }
+
+  .btn1 {
+    color: rgba(22, 119, 255);
+    background-color: rgba(239, 239, 254);
+  }
+
+  .btn2 {
+    color: rgba(99, 102, 241);
+    background-color: rgba(216, 216, 229);
+  }
+
+  .btn3 {
+    color: rgba(16, 185, 129);
+    background-color: rgba(231, 248, 242);
+  }
+}

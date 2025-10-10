@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Electron</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; 
+           connect-src 'self' http://localhost:3005 ws://localhost:3005;
+           script-src 'self' https://localhost:3005; 
+           style-src 'self' 'unsafe-inline'; 
+           img-src 'self' data: https://localhost:3005 http://localhost:3005;"
+    />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>
