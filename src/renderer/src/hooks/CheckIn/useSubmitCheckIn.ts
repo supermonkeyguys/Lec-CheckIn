@@ -3,7 +3,7 @@ import { CheckInRecord, SubmitCheckInParams } from "../../store/clockReducer/typ
 import { message } from "antd";
 import { useDispatch } from "react-redux";
 import { addCheckInRecord } from "../../store/clockReducer";
-import { submitCheckInService } from "@/renderer/src/services/clock";
+import { submitCheckInService } from "@renderer/services/clock";
 
 export function useSubmitCheckIn() {
     const dispatch = useDispatch()

@@ -1,7 +1,6 @@
+import { getCheckInStatService } from "@renderer/services/clock";
+import { getUserId } from "@renderer/utils/use-Token";
 import { useRequest } from "ahooks";
-import { getCheckInStatService } from "@/renderer/src/services/clock";
-import { getUserId } from "@/renderer/src/utils/use-Token";
-
 
 
 export function useCheckInStat() {

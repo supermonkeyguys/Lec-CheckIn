@@ -11,8 +11,8 @@ import { useSubmitCheckIn } from "../../hooks/CheckIn/useSubmitCheckIn";
 import { useTimer } from "../../hooks/CheckIn/useTimer";
 
 import ClockHeatmap from "./ClockRecord/ClockHeatMap";
-import { getUserId } from "@/renderer/src/utils/use-Token";
 import { useAuth } from "../../hooks/User/useAuth";
+import { getUserId } from "@renderer/utils/use-Token";
 
 const { Title, Text } = Typography
 

@@ -6,9 +6,8 @@ import { DateRange } from '../../../../store/clockReducer/type';
 import { formatDuration } from '../utils';
 import { useCheckInRecord } from '../../../../hooks/CheckIn/useCheckInRecord';
 import { useGetAllCheckInRecord } from '../../../../hooks/CheckIn/useGetAllCheckInRecord';
-
 import dayjs from 'dayjs';
-import { getUserId } from '@/renderer/src/utils/use-Token';
+import { getUserId } from '@renderer/utils/use-Token';
 
 const { Title } = Typography;
 

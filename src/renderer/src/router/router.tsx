@@ -9,11 +9,20 @@ import TeamMember from "../pages/TeamMember/TeamMember";
 import NotFound from "../pages/NotFound";
 import type { Router } from '@remix-run/router'
 import Home from "@renderer/pages/Home/Home";
+import HomeLayout from "@renderer/layouts/HomeLayout";
+
+
 
 const routerConfigure:Router = createHashRouter([
     {
         path:'/',
-        element: <Home />
+        element: <HomeLayout />,
+        children: [
+            {
+                index:true,
+                element:<Home />
+            }
+        ]
     },
     {
         path: '/clock',
@@ -26,11 +35,11 @@ const routerConfigure:Router = createHashRouter([
                 element: <ClockIn />,
             },
             {
-                path: 'drawCard/',
+                path: 'drawCard',
                 element: <DrawCard />
             },
             {
-                path: 'profile/',
+                path: 'profile',
                 element: <Profile />,
             },
             {
@@ -56,7 +65,7 @@ const routerConfigure:Router = createHashRouter([
 
 export default routerConfigure
 
-const clock_pathname = 'clock'
+const clock_pathname = '/clock'
 export const CLOCKIN_PAGE_PATHNAME = clock_pathname + '/clockIn'
 export const DRAWCARD_PAGE_PATHNAME = clock_pathname + '/drawCard'
 export const PROFILE_PAGE_PATHNAME = clock_pathname + '/profile'

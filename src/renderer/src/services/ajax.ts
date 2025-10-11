@@ -18,6 +18,7 @@ instance.interceptors.request.use(
     const isPublic = publicPaths.some(path => config.url?.startsWith(path));
     if (!isPublic) {
       const token = await getToken()
+      console.log(token)
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
       }

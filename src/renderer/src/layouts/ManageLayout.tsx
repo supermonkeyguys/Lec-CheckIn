@@ -3,18 +3,22 @@ import SideBar from "../components/SideBar/SideBar";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from './ManageLayout.module.scss'
 import { Button } from "antd";
-import { removeToken } from "@/renderer/src/utils/use-Token";
+import { removeToken } from "@renderer/utils/use-Token";
+import TitleBar from "@renderer/components/TitleBar/TitleBar";
 
 const ManageLayout: FC = () => {
-    const nav = useNavigate()
 
     const handleLogout = () => {
         removeToken()
-        nav('/')
+        window.electronAPI?.openWindow('/')
+        window.electronAPI?.removeWindow('/clock/clockIn')
     }
 
     return (
         <div className={styles.layoutContainer}>
+            <div>
+                <TitleBar />
+            </div>
             <SideBar />
             <div className={styles.outletContainer}>
                 <Button

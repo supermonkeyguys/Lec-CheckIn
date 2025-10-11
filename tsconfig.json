@@ -6,7 +6,9 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/renderer/*"]
+      // 同步 Vite 别名，@ 指向 src/renderer/src
+      "@/*": ["src/renderer/src/*"],
+      "@renderer/*":["src/renderer/src/*"]
     }
   },
   "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
@@ -14,7 +16,8 @@
     "src/**/*.ts", 
     "src/**/*.tsx", 
     "types/*.d.ts",
-    "src/preload/**/*"
+    "src/preload/**/*",
+    "src/renderer/types/**/*"
   ],
   "exclude": ["src/main/**/*"]
-} 
+}

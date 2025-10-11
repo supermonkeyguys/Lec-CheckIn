@@ -117,9 +117,6 @@ importers:
       vite:
         specifier: ^7.1.6
         version: 7.1.9(@types/node@22.18.8)(sass@1.93.2)
-      vite-plugin-sass:
-        specifier: ^0.1.0
-        version: 0.1.0
 
 packages:
 
@@ -3467,9 +3464,6 @@ packages:
 
   victory-vendor@37.3.6:
     resolution: {integrity: sha512-SbPDPdDBYp+5MJHhBCAyI7wKM3d5ivekigc2Dk2s7pgbZ9wIgIBYGVw4zGHBml/qTFbexrofXW6Gu4noGxrOwQ==}
-
-  vite-plugin-sass@0.1.0:
-    resolution: {integrity: sha512-gLwvs3ozfDAOZCqs+PepkTd4078m8tfq50IlmTW/OphlWsW95uP7lQ5A3NezfUfTZDTCOA4nFlYnOWRpsKYOqw==}
 
   vite@7.1.9:
     resolution: {integrity: sha512-4nVGliEpxmhCL8DslSAUdxlB6+SMrhB0a1v5ijlh1xB1nEPuy1mxaHxysVucLHuWryAxLWg6a5ei+U4TLn/rFg==}
@@ -7546,8 +7540,6 @@ snapshots:
       d3-shape: 3.2.0
       d3-time: 3.1.0
       d3-timer: 3.0.1
-
-  vite-plugin-sass@0.1.0: {}
 
   vite@7.1.9(@types/node@22.18.8)(sass@1.93.2):
     dependencies:

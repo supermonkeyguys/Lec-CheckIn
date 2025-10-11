@@ -1,6 +1,8 @@
-import { SubmitCheckInParams } from '@/renderer/src/store/clockReducer/type'
+import { SubmitCheckInParams } from '@renderer/store/clockReducer/type'
 import axios, { ResDataType } from './ajax'
-import { SearchOption } from '@/renderer/src/hooks/CheckIn/useCheckInRecord'
+import { SearchOption } from '@renderer/hooks/CheckIn/useCheckInRecord'
+
+
 
 type DailyItem = {
   date: string

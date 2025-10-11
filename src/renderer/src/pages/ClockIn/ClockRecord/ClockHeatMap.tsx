@@ -4,7 +4,7 @@ import { useRequest } from 'ahooks';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import dayjs from 'dayjs';
 import Title from 'antd/es/typography/Title';
-import axios, { ResDataType } from '@/renderer/src/services/ajax';
+import axios, { ResDataType } from '@renderer/services/ajax';
 
 
 interface DailyTotal {

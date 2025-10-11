@@ -9,7 +9,8 @@ import styles from './ClockRanking.module.scss'
 import { connectRankingSocket } from "./utils/socket";
 import { getGrade } from "../../Profile/Profile";
 import { formatDuration } from "../ClockRecord/utils";
-import { getUserRankingService } from "@/renderer/src/services/clock";
+import { getUserRankingService } from "@renderer/services/clock";
+
 
 interface OptionType {
     value: string;

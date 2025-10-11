@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../store";
 import { useCallback, useEffect, useState } from "react";
 import { startTimer, stopTimer } from "../../store/clockReducer";
+import { Timeout } from "ahooks/lib/useRequest/src/types";
 
 export function useTimer() {
     const dispatch = useDispatch()
@@ -12,7 +13,7 @@ export function useTimer() {
     const [seconds, setSeconds] = useState(0)
 
     useEffect(() => {
-        let interval = null
+        let interval:Timeout | null = null
 
         if (isTiming && startTime) {
             const updateElapsedTime = () => {

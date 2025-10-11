@@ -1,4 +1,4 @@
-import { getToken, getUserId } from '@/renderer/src/utils/use-Token'
+import { getToken, getUserId } from '@renderer/utils/use-Token'
 import { useRequest } from 'ahooks'
 
 export function useAuth() {

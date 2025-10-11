@@ -10,36 +10,30 @@ export function createAppWindow(name: string, route: string) {
     return existing
   }
 
+  const width = name === '/' ? 1000 : 1400;
+  const height = name === '/' ? 700 : 900;
+
+  const preloadPath = path.join(__dirname, '../preload/index.js')
+
   const win = new BrowserWindow({
-    width: 1000,
-    height: 700,
+    width: width,
+    height: height,
     frame: false,
     resizable: false,
     webPreferences: {
-      preload: path.join(__dirname, '../preload/index.js'),
-      webSecurity: false,
-      allowRunningInsecureContent: true
+      contextIsolation:true,
+      preload: preloadPath,
     }
   })
 
-  const baseUrl =
-    process.env.VITE_DEV_SERVER_URL || `${path.join(__dirname, '../../src/renderer/index.html')}`
-
-  console.log(process.env['VITE_DEV_SERVER_URL'])
-  console.log('=== ENV DEBUG START ===')
-  console.log('NODE_ENV:', process.env.NODE_ENV)
-  console.log('VITE_DEV_SERVER_URL:', process.env.VITE_DEV_SERVER_URL)
-  console.log('CWD:', process.cwd())
-  console.log('=== ENV DEBUG END ===')
-  console.log('process: ', process.env.VITE_DEV_SERVER_URL)
-  console.log(baseUrl)
-
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(`${baseUrl}`)
+  if (process.env.NODE_ENV === 'development') {
+    process.env.VITE_DEV_SERVER_URL = 'http://localhost:5137'
+    win.loadURL(`${process.env.VITE_DEV_SERVER_URL}/#${route}`)
+    console.log(`${process.env.VITE_DEV_SERVER_URL}/#${route}`)
   } else {
-    win.loadFile(path.join(__dirname, '../renderer/index.html'), {
-      hash: route
-    })
+    console.log(222)
+  
+    win.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
 
   win.on('closed', () => {
@@ -49,4 +43,14 @@ export function createAppWindow(name: string, route: string) {
   windows.set(name, win)
 
   return win
+}
+
+export function removeWindow(name:string):boolean{
+  const win = windows.get(name) 
+  if(win) {
+    win.close()
+    return true
+  }
+
+  return false
 }
