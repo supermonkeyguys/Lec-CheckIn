@@ -1,3 +1,36 @@
+.profileCard {
+  display: flex;
+  justify-content: space-between;
+
+  .exitBtn {
+    color: #ff4d4f;
+    font-weight: 500;
+    padding: 6px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    background: transparent;
+    transition: all 0.2s;
+
+    &:hover {
+      color: #ff7875 !important;
+      background-color: rgba(255, 77, 79, 0.08);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      color: #ff4d4f;
+      background-color: rgba(255, 77, 79, 0.15);
+      transform: translateY(0);
+    }
+
+    &:focus {
+      color: #ff4d4f !important;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.3);
+    }
+  }
+}
+
 .avatarContainer {
   position: relative;
   padding: 0 12px;
@@ -49,7 +82,9 @@
     color: #fff;
     font-size: 28px;
     opacity: 0.7;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
   &:hover .uploadMask {
     opacity: 1;

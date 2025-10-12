@@ -2,9 +2,9 @@ import { FC, useEffect, useState } from "react";
 import PageInfo from "../../components/PageInfo";
 import { Button, Card, Col, message, Modal, Row, Space, Typography } from "antd";
 import ContentComponent from "../../components/ContentComponent/Component";
-import { CaretRightOutlined, CheckCircleOutlined, ClockCircleOutlined, MenuOutlined, RightOutlined, StarFilled, TrophyFilled, } from "@ant-design/icons";
+import { CaretRightOutlined, CheckCircleOutlined, ClockCircleOutlined, MenuOutlined, RightOutlined, TrophyFilled, } from "@ant-design/icons";
 import styles from './ClockIn.module.scss'
-import { formatTime, } from "./utils";
+import { formatTime, transMsTos, } from "./utils";
 import { useNavigate } from "react-router-dom";
 import { POINTS_PAGE_PATHNAME, RECORD_PAGE_PATHNAME } from "../../router/router";
 import { useSubmitCheckIn } from "../../hooks/CheckIn/useSubmitCheckIn";
@@ -18,29 +18,28 @@ const { Title, Text } = Typography
 
 const ClockStart: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [lastDuration, setLastDuration] = useState(0)
     const { submitCheckIn, loading } = useSubmitCheckIn()
     const { userId } = useAuth()
     const {
-        isTiming,
-        staTime,
-        currentSeconds,
-        handleStart,
-        handleStop
+        currentTime,
+        isRunning,
+        start,
+        stop,
+        startTime,
     } = useTimer()
 
     const handleStopClock = async () => {
-        const duration = handleStop()
-        setLastDuration(duration)
+        await stop()
+        const duration = transMsTos(currentTime)
         try {
             console.log(userId)
             if (!userId) throw new Error('当前查询不到用户名, 请重新登录')
             await submitCheckIn({
                 userId,
-                startTime: new Date(staTime),
+                startTime:new Date(startTime?.toISOString() || ''),
                 endTime: new Date(),
                 checkInDate: new Date(),
-                duration: handleStop()
+                duration
             });
 
             setIsModalOpen(true)
@@ -71,16 +70,15 @@ const ClockStart: FC = () => {
                     打卡完成
                 </div>
                 <div style={{ fontSize: '14px', color: '#888' }}>
-                    本次打卡时长: {formatTime(lastDuration)}
+                    本次打卡时长: {formatTime(currentTime).split('.')[0]}
                 </div>
                 <div style={{ fontSize: '16px', color: 'rgba(245, 158, 11)' }}>
-                    获得积分: +{Math.floor(lastDuration / 60)}
+                    获得积分: +{Math.floor(transMsTos(currentTime) / 60)}
                 </div>
                 <Button
                     type="primary"
                     onClick={() => {
                         setIsModalOpen(false)
-                        setLastDuration(0)
                     }}
                 >
                     确定
@@ -96,18 +94,18 @@ const ClockStart: FC = () => {
                 <ClockCircleOutlined style={{ fontSize: '32px', color: 'rgba(22, 119, 255)' }} />
                 <Title level={4} style={{ margin: '0' }}>Start CheckIn</Title>
                 <Text style={{ margin: "0" }}>
-                    {isTiming ? `打卡中...` : '未开始打卡'}
+                    {isRunning ? `打卡中...` : '未开始打卡'}
                 </Text>
-                <div className={styles.clockTime}>{formatTime(currentSeconds)}</div>
+                <div className={styles.clockTime}>{formatTime(currentTime)}</div>
                 <Button
                     disabled={loading}
                     type="primary"
                     icon={<CaretRightOutlined />}
-                    onClick={(isTiming ? handleStopClock : handleStart)}
-                    className={isTiming ? styles.end : ''}
+                    onClick={(isRunning ? handleStopClock : start)}
+                    className={isRunning ? styles.end : ''}
                     style={{ width: "320px", height: "40px", borderRadius: "16px" }}
                 >
-                    {isTiming ? '停止打卡' : '开始打卡'}
+                    {isRunning ? '停止打卡' : '开始打卡'}
                 </Button>
             </Card>
             {ModalElem}
@@ -188,7 +186,7 @@ const ClockIn: FC = () => {
         const fetchData = async () => {
             try {
                 const id = await getUserId()
-                setUserId(id)
+                setUserId(id || '')
             } catch (err) {
                 console.log(err)
                 setUserId(null)

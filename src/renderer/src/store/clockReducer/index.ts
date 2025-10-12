@@ -15,9 +15,9 @@ const INIT_STATE: CheckInState = {
         isEditing: false,
     },
 
-    isTiming: false,
-    startTime: null,
-    staTime:'',
+    isRunning: false,
+    startTime:'',
+    currentTime: 0,
 }
 
 export const checkInSlice = createSlice({
@@ -28,15 +28,6 @@ export const checkInSlice = createSlice({
             state.current = INIT_STATE.current
         },
         resetCheckIn: () => INIT_STATE,
-        startTimer: (state: CheckInState) => {
-            state.isTiming = true
-            state.startTime = Date.now()
-            state.staTime = new Date().toString()
-        },
-        stopTimer: (state: CheckInState) => {
-            state.isTiming = false
-            state.startTime = null
-        },
         updateCurrent: (state: CheckInState, action: PayloadAction<Partial<CheckInState['current']>>) => {
             state.current = { ...state.current, ...action.payload }
         },
@@ -67,8 +58,6 @@ export const {
     resetCurrent,
     addCheckInRecord,
     getCheckInData,
-    startTimer,
-    stopTimer,
 } = checkInSlice.actions
 
 export default checkInSlice.reducer 

@@ -1,4 +1,4 @@
-import { ClockCircleOutlined, GiftOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, GiftOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu, message } from "antd";
 import { FC } from "react";
 import { DRAWCARD_PAGE_PATHNAME, ROUTES, TEAMMEMBER_PAGE_PATHNAME } from "../../router/router";
@@ -29,6 +29,11 @@ const SideBar: FC = () => {
             label: "团队成员",
             icon: <TeamOutlined />,
             key: ROUTES.TEAMMEMBER,
+        },
+        {
+            label:'设置',
+            icon:<SettingOutlined />,
+            key: ROUTES.SETTING
         }
     ]
 

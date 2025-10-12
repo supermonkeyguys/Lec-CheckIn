@@ -9,9 +9,11 @@
   }
 }
 
+.segmented {
+  background-color:  none !important;
+  width: auto;
+}
 
-
-// 前三名公共基础样式：统一内边距、圆角、字体加粗
 .prev {
   display: inline-flex;
   align-items: center;
@@ -24,7 +26,6 @@
   position: relative;
   z-index: 1;
 
-  // 解决图标与文字重叠问题
   &::after {
     content: '';
     position: absolute;
@@ -34,15 +35,11 @@
   }
 }
 
-// 第1名：金色渐变+皇冠图标+外发光
 .first {
   @extend .prev;
-  // 金色渐变背景
   background: linear-gradient(135deg, #ffd700, #f0c808, #e6b800);
-  // 金色边框发光
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.4);
 
-  // 皇冠图标（用CSS实现简单图标，避免引入额外图片）
   &::after {
     width: 16px;
     height: 16px;
@@ -62,15 +59,10 @@
   }
 }
 
-// 第2名：银色渐变+奖杯图标+弱发光
 .second {
   @extend .prev;
-  // 银色渐变背景
   background: linear-gradient(135deg, #c0c0c0, #d0d0d0, #e0e0e0);
-  // 银色边框发光（强度低于第1名）
   box-shadow: 0 0 8px rgba(192, 192, 192, 0.6), 0 0 15px rgba(192, 192, 192, 0.4);
-
-  // 奖杯图标（CSS实现）
   &::after {
     width: 14px;
     height: 14px;
@@ -88,21 +80,16 @@
   }
 }
 
-// 第3名：铜色渐变+奖牌图标+微弱发光
 .third {
   @extend .prev;
-  // 铜色渐变背景
   background: linear-gradient(135deg, #cd7f32, #d48a40, #e0964e);
-  // 铜色边框发光（强度最低）
   box-shadow: 0 0 6px rgba(205, 127, 50, 0.6), 0 0 12px rgba(205, 127, 50, 0.4);
 
-  // 奖牌图标（CSS实现）
   &::after {
     width: 14px;
     height: 14px;
     background: linear-gradient(135deg, #f8f0e3, #f5e6d3);
     border-radius: 50%;
-    // 奖牌中间横线
     &::before {
       content: '';
       position: absolute;
@@ -115,8 +102,6 @@
     }
   }
 }
-
-// 非前三名普通样式（作为对比）
 .normal {
   display: inline-flex;
   align-items: center;
@@ -127,19 +112,4 @@
   background: #f0f2f5;
   color: #333;
   font-weight: 500;
-}
-
-// 响应式适配：小屏幕下缩小尺寸
-@media (max-width: 768px) {
-  .prev,
-  .normal {
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
-  }
-
-  .prev::after {
-    width: 12px;
-    height: 12px;
-  }
 }

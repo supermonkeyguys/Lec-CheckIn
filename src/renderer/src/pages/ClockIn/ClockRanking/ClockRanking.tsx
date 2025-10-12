@@ -4,12 +4,11 @@ import PageInfo from "../../../components/PageInfo";
 import { Button, Card, Cascader, Form, Segmented, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { ClockCircleOutlined, TrophyOutlined } from "@ant-design/icons";
-import styles from './ClockRanking.module.scss'
-
 import { connectRankingSocket } from "./utils/socket";
 import { getGrade } from "../../Profile/Profile";
 import { formatDuration } from "../ClockRecord/utils";
 import { getUserRankingService } from "@renderer/services/clock";
+import styles from './ClockRanking.module.scss'
 
 
 interface OptionType {
@@ -124,7 +123,6 @@ const RankCard: FC<{
     activeKey: string;
     dataSource: any[];
 }> = ({ activeKey, dataSource }) => {
-    console.log('RankCard dataSource', dataSource, dataSource || [], dataSource ?? [])
     const columns = [
         {
             title: '排行',
@@ -214,15 +212,18 @@ const ClockRanking: FC = () => {
         <ContentComponent
             componentList={[
                 () => <PageInfo title="打卡排行榜" desc="查看个人排名" />,
-                () => <Segmented
-                    shape="round"
-                    options={[
-                        { label: '打卡时长', value: 'duration', icon: <ClockCircleOutlined /> },
-                        { label: '积分排行', value: 'points', icon: <TrophyOutlined /> },
-                    ]}
-                    value={activeKey}
-                    onChange={(value) => setActiveKey(value)}
-                />,
+                () =>
+                    <div className={styles.segmented}> 
+                        <Segmented
+                            shape="round"
+                            options={[
+                                { label: '打卡时长', value: 'duration', icon: <ClockCircleOutlined /> },
+                                { label: '积分排行', value: 'points', icon: <TrophyOutlined /> },
+                            ]}
+                            value={activeKey}
+                            onChange={(value) => setActiveKey(value)}
+                        />
+                    </div>,
                 () => <RankFilter onFilter={handleFilter} activeKey={activeKey} form={form} />,
                 () => <RankCard activeKey={activeKey} dataSource={rankingData} />
             ]}

@@ -5,8 +5,11 @@ import styles from './ManageLayout.module.scss'
 import { Button } from "antd";
 import { removeToken } from "@renderer/utils/use-Token";
 import TitleBar from "@renderer/components/TitleBar/TitleBar";
+import { useSetting } from "@renderer/hooks/useSetting";
 
 const ManageLayout: FC = () => {
+    const { backgroundType } = useSetting()
+    const isNone = backgroundType === 'none'
 
     const handleLogout = () => {
         removeToken()
@@ -15,7 +18,7 @@ const ManageLayout: FC = () => {
     }
 
     return (
-        <div className={styles.layoutContainer}>
+        <div className={`${styles.layoutContainer} ${false ? '' : styles.specBackground}`}>
             <div>
                 <TitleBar />
             </div>

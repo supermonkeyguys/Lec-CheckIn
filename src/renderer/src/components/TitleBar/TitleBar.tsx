@@ -1,7 +1,6 @@
-import Renderer from "electron/renderer";
 import { FC } from "react";
 import styles from './TitleBar.module.scss'
-import { Outlet, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const TitleBar: FC = () => {
     const location = useLocation()

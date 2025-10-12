@@ -6,6 +6,10 @@ const api = {
   removeToken:() => ipcRenderer.invoke('remove-token'),
   openWindow:(route:string) => ipcRenderer.send('open-window',route), 
   removeWindow:(route:string) => ipcRenderer.send('close-window',route),
+  startTimer:() => ipcRenderer.invoke('timer-start'),
+  stopTimer:() => ipcRenderer.invoke('timer-stop'),
+  getElapsedTime:() => ipcRenderer.invoke('timer-get'),
+  isRunning:() => ipcRenderer.invoke('timer-isRunning')
 }
 
 if (process.contextIsolated) {

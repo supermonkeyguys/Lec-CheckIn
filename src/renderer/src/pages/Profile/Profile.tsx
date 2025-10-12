@@ -8,7 +8,6 @@ import ContentComponent from '../../components/ContentComponent/Component';
 import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import styles from './Profile.module.scss'
 import { useUpdateInfo } from '../../hooks/User/useUpdateInfo';
-import { getUserId } from '@renderer/utils/use-Token';
 import { useAuth } from '../../hooks/User/useAuth';
 
 const { Text } = Typography
@@ -17,7 +16,7 @@ interface PersonalCardProps {
     nickname: string;
     pointsBalance: number;
     grade: string;
-    avatarUrl:string;
+    avatarUrl: string;
 }
 
 const NameElem = ({ name, refreshGetInfo }: { name: string; refreshGetInfo: (s: string) => void }) => {
@@ -36,7 +35,6 @@ const NameElem = ({ name, refreshGetInfo }: { name: string; refreshGetInfo: (s: 
             message.warning("标题不能为空")
         }
         try {
-            const userId = await getUserId()
             await updateInfo(newTitle)
             setTempName(newTitle)
             refreshGetInfo(newTitle)
@@ -109,55 +107,63 @@ const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, a
         return true
     }
 
-    if(loading) return (
+    if (loading) return (
         <div>加载中...</div>
     )
-    if(!userId) return (
+    if (!userId) return (
         <div>用户信息出错</div>
-    ) 
+    )
 
     return (
-        <Card>
-            <Row gutter={20}>
-                <div className={styles.avatarContainer}>
-                    <Avatar size={90} src={avatar} className={styles.avatar} />
-                    <Upload
-                        className={styles.uploadOverlay}
-                        action={`/api/user/avatar?userId=${userId}`}
-                        name='avatar'
-                        headers={{
-                            Authorization: `Bearer ${token}`
-                        }}
-                        listType='picture'
-                        maxCount={1}
-                        fileList={fileList}
-                        onChange={handleChange}
-                        beforeUpload={beforeUpload}
-                        showUploadList={false}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <div className={styles.uploadMask}>
-                            <CameraOutlined className={styles.iconMask} />
-                        </div>
-                    </Upload>
-                </div>
+        <Card >
+            <div className={styles.profileCard}>
+                <Row gutter={20}>
+                    <div className={styles.avatarContainer}>
+                        <Avatar size={90} src={avatar} className={styles.avatar} />
+                        <Upload
+                            className={styles.uploadOverlay}
+                            action={`/api/user/avatar?userId=${userId}`}
+                            name='avatar'
+                            headers={{
+                                Authorization: `Bearer ${token}`
+                            }}
+                            listType='picture'
+                            maxCount={1}
+                            fileList={fileList}
+                            onChange={handleChange}
+                            beforeUpload={beforeUpload}
+                            showUploadList={false}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <div className={styles.uploadMask}>
+                                <CameraOutlined className={styles.iconMask} />
+                            </div>
+                        </Upload>
+                    </div>
 
-                <Col>
-                    <NameElem
-                        name={nickname}
-                        refreshGetInfo={refreshGetInfo}
-                    />
-                    <Text type="secondary" style={{ fontSize: 16 }}>
-                        {getGrade(grade)}
-                    </Text>
-                    <Row style={{ marginTop: 10 }}>
-                        <StarFilled style={{ color: '#F59E0B', marginRight: 8, fontSize: 20 }} />
-                        <Text type="secondary" style={{ fontSize: 15 }}>
-                            当前积分: <strong style={{ color: 'black', fontSize: 15 }}>{pointsBalance}</strong>
+                    <Col>
+                        <NameElem
+                            name={nickname}
+                            refreshGetInfo={refreshGetInfo}
+                        />
+                        <Text type="secondary" style={{ fontSize: 16 }}>
+                            {getGrade(grade)}
                         </Text>
-                    </Row>
-                </Col>
-            </Row>
+                        <Row style={{ marginTop: 10 }}>
+                            <StarFilled style={{ color: '#F59E0B', marginRight: 8, fontSize: 20 }} />
+                            <Text type="secondary" style={{ fontSize: 15 }}>
+                                当前积分: <strong style={{ color: 'black', fontSize: 15 }}>{pointsBalance}</strong>
+                            </Text>
+                        </Row>
+                    </Col>
+                </Row>
+                <Button
+                    className={styles.exitBtn}
+                    type='link'
+                >
+                    退出
+                </Button>
+            </div>
         </Card>
     )
 }
@@ -165,11 +171,11 @@ const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, a
 const Profile: FC = () => {
 
     const { userInfo, refreshGetInfo } = useGetUserInfo()
-    
+
     useEffect(() => {
         refreshGetInfo()
-    },[])
-    
+    }, [])
+
 
     return (
         <ContentComponent

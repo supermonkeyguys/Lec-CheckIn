@@ -1,9 +1,11 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app,  ipcMain } from 'electron'
 import { createAppWindow, removeWindow } from './windowsManager'
 import { getToken, removeToken, setToken } from './tokenManage'
+import { registerTimerHandlers } from './ipcHandlers'
 
 
 app.whenReady().then(() => {
+  registerTimerHandlers()
   createAppWindow('/', '/')
 })
 

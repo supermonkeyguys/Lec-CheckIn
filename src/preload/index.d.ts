@@ -8,6 +8,10 @@ declare global {
       setToken: (token: string) => Promise<boolean>
       getToken: () => Promise<string | null>
       removeToken: () => Promise<boolean>
+      startTimer:() => Promise<void> 
+      stopTimer:() => Promise<number>
+      getElapsedTime:() => Promise<number> 
+      isRunning:() => Promise<boolean>
     }
   }
 }

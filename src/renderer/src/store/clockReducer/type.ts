@@ -30,9 +30,9 @@ export interface CheckInState {
         editingId?: string;
     }
 
-    isTiming: boolean;
-    startTime: number | null;
-    staTime: string;
+    isRunning: boolean;
+    startTime: string;
+    currentTime: number;
 }
 
 export interface SubmitCheckInParams {

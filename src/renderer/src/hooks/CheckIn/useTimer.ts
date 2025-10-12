@@ -1,58 +1,66 @@
-import { useDispatch, useSelector } from "react-redux";
-import { StateType } from "../../store";
-import { useCallback, useEffect, useState } from "react";
-import { startTimer, stopTimer } from "../../store/clockReducer";
-import { Timeout } from "ahooks/lib/useRequest/src/types";
+import { useEffect, useRef, useState } from 'react'
+
+type TimerStatus = {
+  currentTime: number
+  isRunning: boolean
+}
 
 export function useTimer() {
-    const dispatch = useDispatch()
-    const { isTiming, startTime , staTime } = useSelector(
-        (state: StateType) => state.checkIn
-    )
+  const [startTime,setStartTime] = useState<Date | null>(null)
+  const [status, setStatus] = useState<TimerStatus>({
+    currentTime: 0,
+    isRunning: false
+  })
 
-    const [seconds, setSeconds] = useState(0)
+  const statusRef = useRef(status)
+  statusRef.current = status
 
-    useEffect(() => {
-        let interval:Timeout | null = null
-
-        if (isTiming && startTime) {
-            const updateElapsedTime = () => {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000)
-                setSeconds(elapsed)
-            }
-            updateElapsedTime()
-
-            interval = setInterval(updateElapsedTime, 1000)
-        } else {
-            setSeconds(0)
-        }
-
-        return () => {
-            if (interval) clearInterval(interval)
-        }
-    }, [isTiming, startTime])
-
-
-    const handleStart = useCallback(() => {
-        dispatch(startTimer())
-    }, [dispatch])
-
-
-    const handleStop = useCallback(() => {
-        const finalSeconds = isTiming && startTime ?
-            Math.floor((Date.now() - startTime) / 1000) : 0
-
-        dispatch(stopTimer())
-        return finalSeconds
-    }, [dispatch, isTiming, seconds])
-
-
-    return {
-        isTiming,
-        startTime,
-        staTime,
-        currentSeconds: seconds,
-        handleStart,
-        handleStop
+  const syncWithMain = async () => {
+    try {
+      const [isRunning, currentTime] = await Promise.all([
+        window.electronAPI?.isRunning(),
+        window.electronAPI?.getElapsedTime()
+      ])
+      setStatus({ isRunning: !!isRunning, currentTime: currentTime || 0 })
+    } catch (err) {
+      console.warn('Failed to sync timer:', err)
     }
-}  
+  }
+
+  const start = async () => {
+    setStartTime(new Date())
+    await window.electronAPI?.startTimer()
+    await syncWithMain()
+  }
+
+  const stop = async () => {
+    const finalTime = await window.electronAPI?.stopTimer()
+    setStatus({ currentTime: finalTime || 0, isRunning: false })
+    setStartTime(null)
+    await syncWithMain
+    return finalTime || 0
+  }
+
+  useEffect(() => {
+    // 首次同步
+    syncWithMain()
+
+    // 持续同步（每 100ms）
+    const interval = setInterval(() => {
+      if (statusRef.current.isRunning) {
+        window.electronAPI?.getElapsedTime().then((t: number) => {
+          setStatus((prev) => ({ ...prev, currentTime: t || 0 }))
+        })
+      }
+    }, 10)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return {
+    ...status,
+    start,
+    stop,
+    startTime
+  }
+}
