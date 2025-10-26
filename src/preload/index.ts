@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer, desktopCapturer } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 import { UserSetting } from '../main/user/userContext'
 
 const api = {
