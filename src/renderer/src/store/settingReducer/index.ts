@@ -5,21 +5,17 @@ export type BackgroundType = 'none' | 'image' | 'video'
 export type ThemeType = 'light' | 'dark' | 'custom'
 
 export interface SettingState {
-    windowRatio: string
-    customWidth?: number
-    customHeight?: number
-    reminderTime: number
-    reminderInterval: number
-    backgroundType:BackgroundType
+    reminderTime?: number
+    reminderInterval?: number
+    backgroundType?:BackgroundType
     backgroundImageSrc?:string
     backgroundVideoSrc?:string
-    theme: ThemeType
+    theme?: ThemeType
     customColor?: string
 }
 
 
 const initialState: SettingState = {
-    windowRatio: '16:9',
     reminderTime: 3 * 60 * 60 * 1000,
     reminderInterval: 30 * 60 * 1000,
     backgroundType:'none',

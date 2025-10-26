@@ -67,7 +67,7 @@ const RankFilter: FC<{
         const timeRangeMap: Record<string, string> = { all: 'total', month: 'month', week: 'week' };
         const gradeMap: Record<string, string | undefined> =
             { allGrade: undefined, freshman: 'freshman', sophomore: 'sophomore', junior: 'junior', senior: 'senior' };
-        const sortByMap: Record<string, string> = { duration: 'duration', points: 'points' };
+        const sortByMap: Record<string, string> = { checkIn: 'checkIn', points: 'points' };
 
         const params = {
             timeRange: timeRangeMap[values.timeCas] as string,
@@ -75,7 +75,7 @@ const RankFilter: FC<{
             sortBy: sortByMap[activeKey] as string,
         };
 
-
+        console.log(params)
         const res = await getUserRankingService(params);
         onFilter(res);
     }
@@ -123,6 +123,7 @@ const RankCard: FC<{
     activeKey: string;
     dataSource: any[];
 }> = ({ activeKey, dataSource }) => {
+    console.log(dataSource)
     const columns = [
         {
             title: '排行',
@@ -153,12 +154,12 @@ const RankCard: FC<{
             )
         },
         {
-            title: activeKey === 'duration' ? '打卡时长' : '积分',
-            dataIndex: activeKey === 'duration' ? 'totalDuration' : 'pointsBalance',
-            key: activeKey === 'duration' ? 'totalDuration' : 'pointsBalance',
+            title: activeKey === 'checkIn' ? '打卡时长' : '积分',
+            dataIndex: activeKey === 'checkIn' ? 'totalDuration' : 'pointsBalance',
+            key: activeKey === 'checkIn' ? 'totalDuration' : 'pointsBalance',
             render: (value: number) => (
                 <span className={styles[activeKey]}>
-                    {activeKey === 'duration' ? `${formatDuration(value)}` : `${value}分`}
+                    {activeKey === 'checkIn' ? `${formatDuration(value)}` : `${value}分`}
                 </span>
             )
         }
@@ -182,7 +183,7 @@ const RankCard: FC<{
 
 const ClockRanking: FC = () => {
     const [form] = Form.useForm()
-    const [activeKey, setActiveKey] = useState('duration')
+    const [activeKey, setActiveKey] = useState('checkIn')
     const [rankingData, setRankingData] = useState<any[]>([])
 
     const handleFilter = (data: any) => {
@@ -190,7 +191,7 @@ const ClockRanking: FC = () => {
     }
 
     useEffect(() => {
-        form.submit()
+        if(form)form.submit()
     }, [activeKey, form])
 
     useEffect(() => {
@@ -217,7 +218,7 @@ const ClockRanking: FC = () => {
                         <Segmented
                             shape="round"
                             options={[
-                                { label: '打卡时长', value: 'duration', icon: <ClockCircleOutlined /> },
+                                { label: '打卡时长', value: 'checkIn', icon: <ClockCircleOutlined /> },
                                 { label: '积分排行', value: 'points', icon: <TrophyOutlined /> },
                             ]}
                             value={activeKey}

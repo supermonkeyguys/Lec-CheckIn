@@ -12,9 +12,10 @@ const ContentComponent: FC<PropsType> = ({ componentList }) => {
             {
                 componentList &&
                 componentList.map(((C, index) => (
-                    <C key={index} />
+                    <C key={index} className={styles.item} />
                 )))
             }
+            <div></div>
         </div>
     )
 }

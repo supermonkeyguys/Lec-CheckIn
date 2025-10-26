@@ -9,12 +9,17 @@ export function formatTime(date:string) {
     return `${parts[0]}:${parts[1]}`
 }
 
-export function formatDuration(duration:number) {
-    
+export function formatDuration(ms:number) {
+    const duration = Number((ms / 1000).toFixed(2))
+
     if(duration < 60)return `${duration} 秒`
 
-    const min = Math.floor(duration / 60)
+    const min = Number((duration / 60).toFixed(2))
 
-    return `${min} 分钟`
+    if(min < 60)return `${min}分钟`
+
+    const hours = (min / 60).toFixed(2)
+
+    return `${hours}小时`
 }
 

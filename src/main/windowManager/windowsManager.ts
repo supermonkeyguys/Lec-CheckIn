@@ -10,8 +10,8 @@ export function createAppWindow(name: string, route: string) {
     return existing
   }
 
-  const width = name === '/' ? 1000 : 1400;
-  const height = name === '/' ? 700 : 900;
+  const width = name === '/home' ? 1000 : 1400;
+  const height = name === '/home' ? 700 : 900;
 
   const preloadPath = path.join(__dirname, '../preload/index.js')
 
@@ -21,8 +21,11 @@ export function createAppWindow(name: string, route: string) {
     frame: false,
     resizable: false,
     webPreferences: {
+      webSecurity:false,
+      nodeIntegration:true,
       contextIsolation:true,
       preload: preloadPath,
+      sandbox:false
     }
   })
 
@@ -31,8 +34,6 @@ export function createAppWindow(name: string, route: string) {
     win.loadURL(`${process.env.VITE_DEV_SERVER_URL}/#${route}`)
     console.log(`${process.env.VITE_DEV_SERVER_URL}/#${route}`)
   } else {
-    console.log(222)
-  
     win.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
 

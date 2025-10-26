@@ -1,6 +1,6 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import PageInfo from "../../components/PageInfo";
-import { Button, Card, Col, message, Modal, Row, Space, Typography } from "antd";
+import { Button, Card, Col, Modal, Row, Space, Typography } from "antd";
 import ContentComponent from "../../components/ContentComponent/Component";
 import { CaretRightOutlined, CheckCircleOutlined, ClockCircleOutlined, MenuOutlined, RightOutlined, TrophyFilled, } from "@ant-design/icons";
 import styles from './ClockIn.module.scss'
@@ -9,51 +9,45 @@ import { useNavigate } from "react-router-dom";
 import { POINTS_PAGE_PATHNAME, RECORD_PAGE_PATHNAME } from "../../router/router";
 import { useSubmitCheckIn } from "../../hooks/CheckIn/useSubmitCheckIn";
 import { useTimer } from "../../hooks/CheckIn/useTimer";
-
 import ClockHeatmap from "./ClockRecord/ClockHeatMap";
-import { useAuth } from "../../hooks/User/useAuth";
-import { getUserId } from "@renderer/utils/use-Token";
 
 const { Title, Text } = Typography
 
-const ClockStart: FC = () => {
+const ClockStart: FC<{
+    onCheckInSuccess?: () => void
+}> = ({ onCheckInSuccess }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const { submitCheckIn, loading } = useSubmitCheckIn()
-    const { userId } = useAuth()
     const {
         currentTime,
         isRunning,
         start,
         stop,
         startTime,
+        clear,
     } = useTimer()
 
     const handleStopClock = async () => {
         await stop()
-        const duration = transMsTos(currentTime)
-        try {
-            console.log(userId)
-            if (!userId) throw new Error('当前查询不到用户名, 请重新登录')
-            await submitCheckIn({
-                userId,
-                startTime:new Date(startTime?.toISOString() || ''),
-                endTime: new Date(),
-                checkInDate: new Date(),
-                duration
-            });
+        onCheckInSuccess!()
+        await submitCheckIn({
+            startTime: new Date(startTime),
+            endTime: new Date(),
+            checkInDate: new Date(),
+            duration: currentTime
+        });
+        setIsModalOpen(true)
+    }
 
-            setIsModalOpen(true)
-        } catch (err) {
-            console.error(err)
-            message.error('打卡失败');
-        }
-
+    const handleCloseModal = () => {
+        setIsModalOpen(false)
+        clear()
     }
 
     const ModalElem = (
         <Modal
             open={isModalOpen}
-            onCancel={() => setIsModalOpen(false)}
+            onCancel={handleCloseModal}
             centered
             closable={false}
             footer={false}
@@ -77,9 +71,7 @@ const ClockStart: FC = () => {
                 </div>
                 <Button
                     type="primary"
-                    onClick={() => {
-                        setIsModalOpen(false)
-                    }}
+                    onClick={handleCloseModal}
                 >
                     确定
                 </Button>
@@ -179,37 +171,16 @@ const ClockRank: FC = () => {
 
 
 const ClockIn: FC = () => {
-    const [userId, setUserId] = useState<string | null>(null)
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const id = await getUserId()
-                setUserId(id || '')
-            } catch (err) {
-                console.log(err)
-                setUserId(null)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchData()
-    }, [])
-
-    if (!userId || loading) {
-        return (
-            <div>加载中</div>
-        )
-    }
+    const [heatmapKey, setHeatmapKey] = useState(0)
 
     return (
         <ContentComponent
             componentList={[
                 () => <PageInfo title="打卡" desc="记录你学习的时间" />,
-                () => <ClockStart />,
-                () => <ClockHeatmap userId={userId} />,
+                () => <ClockStart
+                    onCheckInSuccess={() => setHeatmapKey(key => key + 1)}
+                />,
+                () => <ClockHeatmap key={heatmapKey} />, //利用 key 触发刷新
                 () => <ClockRank />
             ]}
         />

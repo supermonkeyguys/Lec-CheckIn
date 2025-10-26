@@ -2,7 +2,7 @@ import { message } from "antd";
 import axios from "axios";
 import { getToken } from "../utils/use-Token";
 const instance = axios.create({
-  baseURL: 'http://localhost:3005/',
+  baseURL: 'http://localhost:8080/',
   timeout: 10 * 1000,
   headers: {},
 });
@@ -39,7 +39,7 @@ instance.interceptors.response.use((res) => {
       message.error(msg);
     }
 
-    throw Promise.reject(new Error(msg || '请求失败'))
+    throw new Error(msg || '请求失败')
   }
 
   return data as any;

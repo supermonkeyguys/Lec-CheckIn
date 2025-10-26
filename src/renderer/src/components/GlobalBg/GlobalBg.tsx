@@ -1,10 +1,10 @@
-import { FC } from "react";
-import styles from './GlobalBg.module.scss'
 import { useSetting } from "@renderer/hooks/useSetting";
+import { FC } from "react";
+import styles from './GlobalBg.module.scss';
 
 const GlobalBg: FC = () => {
-    const { backgroundImageSrc, backgroundVideoSrc , backgroundType } = useSetting()
-
+    const { backgroundImageSrc, backgroundVideoSrc, backgroundType } = useSetting()
+    
     return (
         <div className={styles.globalBg}>
             {backgroundType === 'image' && (
@@ -12,6 +12,7 @@ const GlobalBg: FC = () => {
             )}
             {backgroundType === 'video' && (
                 <video
+                    key={backgroundVideoSrc}
                     muted
                     autoPlay
                     playsInline

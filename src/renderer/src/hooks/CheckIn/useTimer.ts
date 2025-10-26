@@ -1,4 +1,7 @@
+import { StateType } from '@renderer/store'
+import { setStartTime } from '@renderer/store/clockReducer'
 import { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 type TimerStatus = {
   currentTime: number
@@ -6,7 +9,8 @@ type TimerStatus = {
 }
 
 export function useTimer() {
-  const [startTime,setStartTime] = useState<Date | null>(null)
+  const dispatch = useDispatch()
+  const startTime = useSelector((state: StateType) => state.checkIn.startTime)
   const [status, setStatus] = useState<TimerStatus>({
     currentTime: 0,
     isRunning: false
@@ -28,7 +32,7 @@ export function useTimer() {
   }
 
   const start = async () => {
-    setStartTime(new Date())
+    dispatch(setStartTime(new Date().toISOString()))
     await window.electronAPI?.startTimer()
     await syncWithMain()
   }
@@ -36,16 +40,18 @@ export function useTimer() {
   const stop = async () => {
     const finalTime = await window.electronAPI?.stopTimer()
     setStatus({ currentTime: finalTime || 0, isRunning: false })
-    setStartTime(null)
+    dispatch(setStartTime(''))
     await syncWithMain
     return finalTime || 0
   }
 
+  const clear = () => {
+    setStatus({ currentTime: 0, isRunning: false })
+  }
+
   useEffect(() => {
-    // 首次同步
     syncWithMain()
 
-    // 持续同步（每 100ms）
     const interval = setInterval(() => {
       if (statusRef.current.isRunning) {
         window.electronAPI?.getElapsedTime().then((t: number) => {
@@ -61,6 +67,7 @@ export function useTimer() {
     ...status,
     start,
     stop,
-    startTime
+    startTime,
+    clear
   }
 }

@@ -1,5 +1,5 @@
 import axios, { ResDataType } from './ajax'
-import { getUserId } from '../utils/use-Token'
+import { SettingState } from '@renderer/store/settingReducer'
 
 type UserProps = {
   username: string
@@ -23,11 +23,9 @@ export async function loginUserService(props: UserProps): Promise<ResDataType> {
 }
 
 export async function updateUserAvatarService(file: File): Promise<ResDataType> {
-  const userId = await getUserId()
   const formData = new FormData()
   formData.append('avatar', file)
-
-  const url = `/api/user/avatar?userId=${userId}`
+  const url = `/api/user/avatar`
 
   const data = await axios.post(url, formData, {
     headers: {
@@ -38,22 +36,34 @@ export async function updateUserAvatarService(file: File): Promise<ResDataType> 
   return data
 }
 
-export async function getUserInfoService(userId: string): Promise<ResDataType> {
-  const url = `/api/user/info?userId=${userId}`
+export async function getUserInfoService(): Promise<ResDataType> {
+  const url = `/api/user/info`
   const data = await axios.get(url)
   return data
 }
 
-export async function updateUserInfo(userId:string,nickname: string): Promise<ResDataType> {
+export async function updateUserInfo(nickname: string): Promise<ResDataType> {
   const url = '/api/user/info'
-  const data = (await axios.post(url, { userId, nickname })) as ResDataType
+  const data = (await axios.post(url, { nickname })) as ResDataType
 
   return data
 }
 
 export async function findAllUserService(grade: string): Promise<ResDataType> {
-  const url = `/api/ranking/daily?grade=${grade}`
+  const url = `/api/user/members?grade=${grade}`
   const data = await axios.get(url)
 
+  return data
+}
+
+export async function updateUserSetting(settings: SettingState): Promise<ResDataType> {
+  const url = `/api/user/setting`
+  const data = await axios.post(url, settings)
+  return data
+}
+
+export async function getUserSetting():Promise<ResDataType> {
+  const url = '/api/user/setting'
+  const data = await axios.get(url)
   return data
 }

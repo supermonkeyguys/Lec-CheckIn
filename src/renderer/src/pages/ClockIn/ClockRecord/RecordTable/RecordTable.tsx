@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Table, Button, Typography, Flex, Tag, Card, Pagination } from 'antd';
+import { Table, Button, Typography, Flex, Tag, Card } from 'antd';
 import type { TableProps } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import { DateRange } from '../../../../store/clockReducer/type';
@@ -7,7 +7,6 @@ import { formatDuration } from '../utils';
 import { useCheckInRecord } from '../../../../hooks/CheckIn/useCheckInRecord';
 import { useGetAllCheckInRecord } from '../../../../hooks/CheckIn/useGetAllCheckInRecord';
 import dayjs from 'dayjs';
-import { getUserId } from '@renderer/utils/use-Token';
 
 const { Title } = Typography;
 
@@ -42,10 +41,8 @@ const RecordTable: FC<{
 
   const fetchRecordData = async () => {
     const { startDate, endDate } = dateRange
-    const userId = await getUserId()
     if (startDate && endDate) {
       await getRecords({
-        userId,
         startDate,
         endDate,
         page,
@@ -55,7 +52,6 @@ const RecordTable: FC<{
     }
     else if (!startDate && !endDate) {
       await getAllRecords({
-        userId,
         page,
         pageSize,
         ...sortParams
@@ -160,7 +156,7 @@ const RecordTable: FC<{
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '50'],
         }}
-        onChange={(pagination, filters, sorter: any) => {
+        onChange={(pagination, sorter: any) => {
           const { current = 1, pageSize: ps = pageSize } = pagination || {}
 
           if (sorter && sorter.field) {

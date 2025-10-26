@@ -1,6 +1,8 @@
 import { BrowserWindow, Notification } from 'electron'
 import { performance } from 'perf_hooks'
 import { clearInterval } from 'timers'
+import { UserStore } from '../user/userContext'
+
 
 interface TimerState {
   isRunning: boolean
@@ -16,11 +18,12 @@ export const timerState: TimerState = {
   currentWindowId: null
 }
 
-const MAX_DURATION_MS = 1 * 60 * 1000
-const WARNING_THRESHOLD_MS = 30 * 60 * 1000
+const DEFAULT_REMINDER_TIME_MS = 3 * 60 * 60 * 1000   
+const DEFAULT_REMINDER_INTERVAL_MS = 10 * 60 * 1000  
 
 let hasSentWaring = false
-let waringCheckInterval:NodeJS.Timeout | null = null
+let waringCheckInterval: NodeJS.Timeout | null = null
+let lastNotifyAt: number | null = null
 
 export const getElapsedTime = (): number => {
   if (!timerState.isRunning || timerState.startTime === null) {
@@ -35,11 +38,13 @@ export const startTimer = (windowId: number) => {
   timerState.startTime = performance.now()
   timerState.currentWindowId = windowId
 
-  if(!waringCheckInterval) {
-    console.log(11111)
+  lastNotifyAt = null
+  hasSentWaring = false
+
+  if (!waringCheckInterval) {
     waringCheckInterval = setInterval(() => {
-        checkAndSendWaring()
-    },10_000)
+      checkAndSendWaring()
+    }, 30_000)
   }
 }
 
@@ -49,7 +54,7 @@ export const stopTimer = () => {
   timerState.accumulatedTime = 0
   timerState.currentWindowId = null
 
-  if(waringCheckInterval) {
+  if (waringCheckInterval) {
     clearInterval(waringCheckInterval)
     waringCheckInterval = null
   }
@@ -57,14 +62,27 @@ export const stopTimer = () => {
 }
 
 export const checkAndSendWaring = () => {
-  if (hasSentWaring) return
+  const s = UserStore.load() || {}
+  const reminderTime =
+    typeof s.reminderTime === 'number' && s.reminderTime > 0
+      ? s.reminderTime
+      : DEFAULT_REMINDER_TIME_MS
+  const reminderInterval =
+    typeof s.reminderInterval === 'number' && s.reminderInterval > 0
+      ? s.reminderInterval
+      : DEFAULT_REMINDER_INTERVAL_MS
 
   const elapsed = getElapsedTime()
-  const remaining = MAX_DURATION_MS - elapsed
 
-  if (remaining <= WARNING_THRESHOLD_MS && remaining > 0) {
-    hasSentWaring = true
-  }
+  if (elapsed < reminderTime)return
+
+  const now = Date.now() 
+  const allowFirst = !hasSentWaring
+  const allowInterval = lastNotifyAt
+    ? (now - lastNotifyAt) >= reminderInterval
+    : true
+
+  if(!(allowFirst || allowInterval)) return
 
   if (Notification.isSupported()) {
     const notification = new Notification({
@@ -75,12 +93,14 @@ export const checkAndSendWaring = () => {
 
     notification.show()
     notification.on('click', () => {
-        const win = BrowserWindow.getAllWindows()[0]
-        if (win) {
-          win.show()
-          win.focus()
-        }
-      })
+      const win = BrowserWindow.getAllWindows()[0]
+      if (win) {
+        win.show()
+        win.focus()
+      }
+    })
   }
 
+  hasSentWaring = true
+  lastNotifyAt = now
 }

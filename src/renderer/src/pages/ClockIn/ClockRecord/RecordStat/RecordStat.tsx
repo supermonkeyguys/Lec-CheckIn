@@ -23,6 +23,8 @@ const RecordStat: FC = () => {
         totalPoints,
         totalHours,
     } = data! || { totalCount: 0 }
+    
+    console.log(data)
 
     useEffect(() => {
         run()

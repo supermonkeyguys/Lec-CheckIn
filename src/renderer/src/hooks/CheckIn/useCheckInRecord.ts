@@ -3,7 +3,6 @@ import { RecordData } from '../../pages/ClockIn/ClockRecord/RecordTable/RecordTa
 import { getCheckInRecordService } from '@renderer/services/clock'
 
 export type SearchOption = {
-  userId: string
   startDate?: string
   endDate?: string
   page: number

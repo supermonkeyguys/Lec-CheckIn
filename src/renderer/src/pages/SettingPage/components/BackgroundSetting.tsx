@@ -1,153 +1,140 @@
 import { updateSetting } from "@renderer/store/settingReducer";
 import { Button, Card, Form, message, Radio, Space } from "antd";
-import Upload, { RcFile } from "antd/es/upload";
 import { FC, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { UploadOutlined } from "@ant-design/icons";
 import { useSetting } from "@renderer/hooks/useSetting";
-import { useAuth } from "@renderer/hooks/User/useAuth";
-import styles from './common.module.scss'
-
+import styles from "./common.module.scss";
+import { useUpdateUserSetting } from "@renderer/hooks/User/uesUpdateUserSetting";
 
 const BackgroundSetting: FC = () => {
-    const dispatch = useDispatch()
-    const { backgroundType, backgroundImageSrc, backgroundVideoSrc } = useSetting()
-    const { userId, token } = useAuth()
-    const [uploading, setUploading] = useState(false)
-    const [pendingType, setPendingType] = useState(backgroundType)
-    const [preview, setPreview] = useState<string | null>(null)
-    const pendingTypeRef = useRef(pendingType)
+  const dispatch = useDispatch();
+  const { backgroundType } = useSetting();
+  const [uploading, setUploading] = useState(false);
+  const [pendingType, setPendingType] = useState(backgroundType);
+  const { run, loading } = useUpdateUserSetting({})
 
-    useEffect(() => {
-        pendingTypeRef.current = pendingType
-    }, [pendingType])
+  const pendingTypeRef = useRef(pendingType);
+  useEffect(() => {
+    pendingTypeRef.current = pendingType;
+  }, [pendingType]);
 
-    const handleTypeChange = (e: any) => {
-        if (e.target.value === 'none') {
-            dispatch(updateSetting({ backgroundType: 'none' }))
-        }
-        setPendingType(e.target.value)
-        setPreview(null)
+  const handleTypeChange = (e: any) => {
+    const newType = e.target.value;
+    if (newType === "none") {
+      dispatch(updateSetting({ backgroundType: 'none' }));
+    }
+    setPendingType(newType);
+  };
+
+  const handleLocalVideoUpload = async () => {
+    if (!window.electronAPI) {
+      message.error("Electron API 不可用");
+      return;
     }
 
-    const beforeUpload = (file: RcFile) => {
-        const isImage = pendingType === 'image';
-        const isVideo = pendingType === 'video';
-        const maxSize = isImage ? 5 * 1024 * 1024 : 50 * 1024 * 1024;
-        if (isImage && !file.type.startsWith('image/')) {
-            message.error('请上传图片文件!');
-            return false;
-        }
-        if (isVideo && !file.type.startsWith('video/')) {
-            message.error('请上传视频文件!');
-            return false;
-        }
-        if (file.size > maxSize) {
-            message.error(`${isImage ? '图片' : '视频'}大小不能超过${isImage ? '5MB' : '50MB'}`);
-            return false;
-        }
+    try {
+      setUploading(true);
+      const res = await window.electronAPI.showOpenDialog({
+        properties: ["openFile"],
+        filters: [{ name: "视频文件", extensions: ["mp4", "mov", "avi", "mkv"] }],
+      });
 
-        const previewUrl = URL.createObjectURL(file)
-        setPreview(previewUrl)
-        return true;
-    };
+      if (!res || res.canceled || !res.filePaths?.length) {
+        setUploading(false)
+        message.info("已取消选择视频");
+        return;
+      }
 
-    const handleChange = (info: any) => {
-        if (info.file.status === 'uploading') {
-            setUploading(true)
-        }
-        else if (info.file.status === 'done') {
-            setUploading(false)
-            const resultUrl = info.file.response?.data?.updatedSetting.backgroundSrc
-                || URL.createObjectURL(info.file.originFileObj as RcFile);
+      const videoPath = res.filePaths[0];
+      console.log(videoPath)
+      const optimizedPath = await window.electronAPI.setBackgroundVideo(videoPath);
+      console.log(optimizedPath)
 
-            console.log(resultUrl)
-            setPreview(resultUrl)
-            if (pendingType === 'image') dispatch(updateSetting({ backgroundType: 'image', backgroundImageSrc: resultUrl }))
-            if (pendingType === 'video') dispatch(updateSetting({ backgroundType: 'video', backgroundVideoSrc: resultUrl }))
-            message.success('背景已更新')
-        } else if (info.file.status === 'error') {
-            setUploading(false)
-            message.error('上传失败')
-        }
+      run({backgroundType:'video'})
+      dispatch(updateSetting({
+        backgroundType: "video",
+        backgroundVideoSrc: optimizedPath,
+      }));
+      message.success("视频背景设置成功");
+    } catch (err) {
+      console.error("error:", err);
+      message.error("设置失败，请重试");
+    } finally {
+      setUploading(false);
     }
+  };
 
-    const accept = pendingType === 'video' ? 'video/*' : 'image/*';
-    const uploadText = pendingType === 'video' ? '选择视频' : '选择图片';
-    const displayPreview = preview || (pendingType === 'video' ? backgroundVideoSrc : backgroundImageSrc) || '';
+const handleImageUpload = async () => {
+  if (!window.electronAPI) return
 
-    return (
-        <Card>
-            <Form layout="vertical">
-                <Form.Item label="背景类型">
-                    <Radio.Group
-                        disabled={uploading}
-                        onChange={handleTypeChange}
-                        value={pendingType}
-                    >
-                        <Radio value="none">无</Radio>
-                        <Radio value="image">图片</Radio>
-                        <Radio value="video">视频</Radio>
-                    </Radio.Group>
-                </Form.Item>
+  const res = await window.electronAPI.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{ name: '图片文件', extensions: ['jpg', 'jpeg', 'png', 'gif'] }],
+  })
+  if (!res || res.canceled || !res.filePaths?.length) return
 
-                {(pendingType === 'image' || pendingType === 'video') && (
-                    <Form.Item
-                        label="背景文件"
-                        help={backgroundType === 'image'
-                            ? '支持JPG、PNG等格式, 最大5MB'
-                            : '支持MP4等格式, 最大50MB'
-                        }
-                    >
-                        <div className={styles.uploadContainer}>
-                            <Space>
-                                <Upload
-                                    action={`/api/user/background?userId=${userId}&backgroundType=${pendingType}`}
-                                    name='background'
-                                    headers={{
-                                        Authorization: `Bearer ${token}`
-                                    }}
-                                    maxCount={1}
-                                    beforeUpload={beforeUpload}
-                                    onChange={handleChange}
-                                    accept={accept}
-                                    showUploadList={false}
-                                >
-                                    <Button
-                                        loading={uploading}
-                                        type="primary"
-                                        icon={<UploadOutlined />}
-                                    >
-                                        {uploadText}
-                                    </Button>
-                                </Upload>
-                            </Space>
-                        </div>
+  const src = res.filePaths[0]
+  const fileUrl = await window.electronAPI.setBackgroundImage(src)
 
-                        {displayPreview && (
-                            <div className={styles.previewContainer}>
-                                {backgroundType === 'video' ? (
-                                    <video
-                                        className={styles.video}
-                                        src={displayPreview}
-                                        autoPlay
-                                        muted
-                                        loop
-                                    />
-                                ) : (
-                                    <img
-                                        className={styles.image}
-                                        src={displayPreview}
-                                        alt="background preview"
-                                    />
-                                )}
-                            </div>
-                        )}
-                    </Form.Item>
-                )}
-            </Form>
-        </Card >
-    )
+  run({backgroundType:'image'})
+  dispatch(updateSetting({
+    backgroundType: 'image',
+    backgroundImageSrc: fileUrl, 
+    backgroundVideoSrc: '',
+  }))
+
+  message.success('图片背景设置成功')
 }
 
-export default BackgroundSetting
+  const handleUploadClick = () => {
+    if (pendingType === "video") handleLocalVideoUpload()
+    else if (pendingType === 'image') {
+      handleImageUpload()
+    }
+  }
+
+  return (
+    <Card>
+      <Form layout="vertical">
+        <Form.Item label="背景类型">
+          <Radio.Group
+            disabled={uploading}
+            onChange={handleTypeChange}
+            value={pendingType}
+          >
+            <Radio value="none">无</Radio>
+            <Radio value="image">图片</Radio>
+            <Radio value="video">视频</Radio>
+          </Radio.Group>
+        </Form.Item>
+
+        {(pendingType === "image" || pendingType === "video") && (
+          <Form.Item
+            label="背景文件"
+            help={
+              pendingType === "image"
+                ? "支持 JPG、PNG 等格式，最大 5MB"
+                : "支持 MP4、MOV 等格式，最大 50MB"
+            }
+          >
+            <div className={styles.uploadContainer}>
+              <Space>
+                <Button
+                  loading={uploading || loading}
+                  type="primary"
+                  icon={<UploadOutlined />}
+                  onClick={handleUploadClick}
+                >
+                  {pendingType === "video" ? "选择视频" : "选择图片"}
+                </Button>
+              </Space>
+            </div>
+          </Form.Item>
+        )}
+      </Form>
+    </Card>
+  );
+};
+
+export default BackgroundSetting;

@@ -4,7 +4,7 @@ import { useRequest } from 'ahooks';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import dayjs from 'dayjs';
 import Title from 'antd/es/typography/Title';
-import axios, { ResDataType } from '@renderer/services/ajax';
+import { fetchWeeklyClockData } from '@renderer/services/clock';
 
 
 interface DailyTotal {
@@ -14,27 +14,17 @@ interface DailyTotal {
     dayLabel: string;
 }
 
-export async function fetchWeeklyClockData(userId: string): Promise<ResDataType> {
-    const url = `/api/checkIn/weekly-heatmap?userId=${userId}`;
-    const res = await axios.get(url);
-    return res
-}
-
-const ClockHeatmap: FC<{ userId: string }> = ({ userId }) => {
+const ClockHeatmap: FC = () => {
     const { data, loading, error } = useRequest(
-        () => fetchWeeklyClockData(userId),
-        {
-            refreshDeps: [userId],
-        }
+        async () => await fetchWeeklyClockData(),
     );
-
     const processedData: DailyTotal[] = useMemo(() => {
         if (!data?.dailyTotals) return [];
         return data.dailyTotals.map((item: any) => {
-            const date = dayjs(item.date);
+            const date = dayjs(item.date + 'T00:00:00');
             return {
                 ...item,
-                totalHours: Number((item.totalSeconds / 3600).toFixed(2)),
+                totalHours: Number((item.totalSeconds / 3600000).toFixed(2)),
                 dayLabel: date.format('ddd'),
             };
         });

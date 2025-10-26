@@ -7,6 +7,14 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
     build: {
       outDir: 'out/main',
+      rollupOptions: {
+        external: [], 
+        output: {
+          assetFileNames: 'assets/[name].[ext]',
+          chunkFileNames: 'chunks/[name].js',
+          entryFileNames: '[name].js',
+        }
+      }
     }
   },
   preload: {
@@ -20,7 +28,8 @@ export default defineConfig({
       rollupOptions: {
         input: path.resolve(__dirname, 'src/preload/index.js'),
         output: {
-          entryFileNames: 'index.js'
+          entryFileNames: 'index.js',
+          format:'cjs',
         }
       }
     }
@@ -44,7 +53,7 @@ export default defineConfig({
       port:5137,
       proxy: {
         '/api': {
-          target: 'http://localhost:3005',
+          target: 'http://localhost:8080',
           changeOrigin: true,
           secure: false
         }

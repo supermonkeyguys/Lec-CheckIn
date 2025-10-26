@@ -1,36 +1,57 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import SideBar from "../components/SideBar/SideBar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import styles from './ManageLayout.module.scss'
-import { Button } from "antd";
-import { removeToken } from "@renderer/utils/use-Token";
 import TitleBar from "@renderer/components/TitleBar/TitleBar";
-import { useSetting } from "@renderer/hooks/useSetting";
+import useSettingSync from "@renderer/hooks/Setting/useLoadSetting";
+import { ScreenPickerModal } from "@renderer/WebRTC/components/ScreenPickerModal/ScreenPickerModal";
 
 const ManageLayout: FC = () => {
-    const { backgroundType } = useSetting()
-    const isNone = backgroundType === 'none'
+    const location = useLocation()
+    const [pickState, setPickState] = useState<{
+        onSelect: (source: any) => void,
+        onCancel: () => void
+    } | null>(null)
+    const pathname = location.pathname
+    useSettingSync()
 
-    const handleLogout = () => {
-        removeToken()
-        window.electronAPI?.openWindow('/')
-        window.electronAPI?.removeWindow('/clock/clockIn')
+    useEffect(() => {
+        const handleScreenPicker = (e: CustomEvent) => {
+            setPickState(e.detail)
+        }
+
+        window.addEventListener('request-screen-picker', handleScreenPicker as EventListener)
+
+        return () => {
+            window.removeEventListener('request-screen-picker', handleScreenPicker as EventListener)
+        }
+    }, [])
+
+    const handleClose = () => {
+        pickState?.onCancel()
+        setPickState(null)
+    }
+
+    const handleSelect = (source:any) => {
+        pickState?.onSelect(source)
+        setPickState(null)
     }
 
     return (
-        <div className={`${styles.layoutContainer} ${false ? '' : styles.specBackground}`}>
+        <div className={`${styles.layoutContainer}`}>
             <div>
                 <TitleBar />
             </div>
-            <SideBar />
+            {!pathname.startsWith('/clock/conference') && <SideBar />}
             <div className={styles.outletContainer}>
-                <Button
-                    onClick={handleLogout}
-                >
-                    退出
-                </Button>
                 <Outlet />
             </div>
+            {pickState && (
+                <ScreenPickerModal 
+                    onSelect={handleSelect}
+                    onClose={handleClose}
+                />
+            )}
         </div>
     )
 }

@@ -1,13 +1,14 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import {
     Space, Form, Input, Button, Typography,
     message,
+    Checkbox,
 } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import styles from './common.module.scss'
 import { loginUserService } from "../../services/user";
-import { setToken } from "@renderer/utils/use-Token";
+import { setUsername } from "@renderer/utils/use-Token";
 type PropsType = {
     onSwitch: (f: boolean) => void
 }
@@ -18,23 +19,23 @@ const Login: FC<PropsType> = ({ onSwitch }) => {
     const [form] = Form.useForm();
 
     const { run: handleLogin, loading } = useRequest(
-        async ({ username, password }) => {
-            const data = await loginUserService({ username, password })
-            return data
+        async ({ username, password, remember }) => {
+            const res = await loginUserService({ username, password })
+            const { token } = res
+
+            setUsername(username)
+            await window.electronAPI?.userLogin({token, username,remember})
+
+            return res
         },
         {
             manual: true,
-            onSuccess: async (res) => {
-                const { token } = res
-                const isSaved = await setToken(token)
-                if (isSaved) {
-                    message.success('登陆成功')
-                    setTimeout(() => {
-                        window.electronAPI!.openWindow('/clock/clockIn')
-                        window.electronAPI!.removeWindow('/')
-                    }, 1000)
-                }
-
+            onSuccess: async () => {
+                message.success('登陆成功')
+                setTimeout(() => {
+                    window.electronAPI!.openWindow('/clock/clockIn')
+                    window.electronAPI!.removeWindow('/home')
+                }, 1000)
             },
             onError(err) {
                 message.error('登录失败')
@@ -59,7 +60,7 @@ const Login: FC<PropsType> = ({ onSwitch }) => {
                 <Form
                     form={form}
                     layout="vertical"
-                    initialValues={{ username: '', password: '' }}
+                    initialValues={{ username: '', password: '', remember: false }}
                     onFinish={handleLogin}
                 >
                     <Form.Item
@@ -85,7 +86,10 @@ const Login: FC<PropsType> = ({ onSwitch }) => {
                             { required: true, message: '请输入密码' }
                         ]}
                     >
-                        <Input />
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item name="remember" valuePropName="checked">
+                        <Checkbox>自动登录</Checkbox>
                     </Form.Item>
                     <Form.Item className={styles.handleBtn}>
                         <Button

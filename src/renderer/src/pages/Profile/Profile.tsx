@@ -9,6 +9,7 @@ import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import styles from './Profile.module.scss'
 import { useUpdateInfo } from '../../hooks/User/useUpdateInfo';
 import { useAuth } from '../../hooks/User/useAuth';
+import { getUsername, removeUsername } from '@renderer/utils/use-Token';
 
 const { Text } = Typography
 
@@ -75,10 +76,8 @@ const NameElem = ({ name, refreshGetInfo }: { name: string; refreshGetInfo: (s: 
 const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, avatarUrl }) => {
     const [avatar, setAvatar] = useState<string | null>(avatarUrl)
     const [fileList, setFileList] = useState<UploadFile[]>([])
-    const { token, userId, loading } = useAuth()
+    const { token, loading } = useAuth()
     const { refreshGetInfo } = useGetUserInfo()
-
-
 
     const handleChange = ({ file, fileList }: UploadChangeParam<UploadFile>) => {
         setFileList(fileList)
@@ -107,11 +106,15 @@ const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, a
         return true
     }
 
+    const handleLogout = () => {
+        window.electronAPI?.userLogout(getUsername())
+        removeUsername()
+        window.electronAPI?.removeWindow('/clock/clockIn')
+        window.electronAPI?.openWindow('/home')
+    }
+
     if (loading) return (
         <div>加载中...</div>
-    )
-    if (!userId) return (
-        <div>用户信息出错</div>
     )
 
     return (
@@ -122,7 +125,7 @@ const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, a
                         <Avatar size={90} src={avatar} className={styles.avatar} />
                         <Upload
                             className={styles.uploadOverlay}
-                            action={`/api/user/avatar?userId=${userId}`}
+                            action={`http://localhost:8080/api/user/avatar`}
                             name='avatar'
                             headers={{
                                 Authorization: `Bearer ${token}`
@@ -159,6 +162,7 @@ const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, a
                 </Row>
                 <Button
                     className={styles.exitBtn}
+                    onClick={handleLogout}
                     type='link'
                 >
                     退出

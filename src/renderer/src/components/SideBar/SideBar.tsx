@@ -1,7 +1,7 @@
-import { ClockCircleOutlined, GiftOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, CommentOutlined, GiftOutlined, HomeOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu, message } from "antd";
 import { FC } from "react";
-import { DRAWCARD_PAGE_PATHNAME, ROUTES, TEAMMEMBER_PAGE_PATHNAME } from "../../router/router";
+import { DRAWCARD_PAGE_PATHNAME, ROUTES, } from "../../router/router";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from './SideBar.module.scss'
 
@@ -31,18 +31,23 @@ const SideBar: FC = () => {
             key: ROUTES.TEAMMEMBER,
         },
         {
-            label:'设置',
-            icon:<SettingOutlined />,
+            label: '聊天大厅',
+            icon: <CommentOutlined />,
+            key: ROUTES.MEETING
+        },
+        {
+            label: '设置',
+            icon: <SettingOutlined />,
             key: ROUTES.SETTING
-        }
+        },
     ]
 
     const handleOnChange = ({ key }: { key: string }) => {
-        const route = menuItems.find(m => m.key === key)
+        const route = menuItems.find(m => m!.key === key)
         if (route) {
-            if(route.key === DRAWCARD_PAGE_PATHNAME){
-                message.info('火速开发中')     
-                return         
+            if (route.key === DRAWCARD_PAGE_PATHNAME) {
+                message.info('火速开发中')
+                return
             }
             nav(route.key)
         }

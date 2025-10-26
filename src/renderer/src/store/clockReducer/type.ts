@@ -36,7 +36,6 @@ export interface CheckInState {
 }
 
 export interface SubmitCheckInParams {
-    userId: string;
     checkInDate: Date;
     startTime: Date;
     endTime: Date;

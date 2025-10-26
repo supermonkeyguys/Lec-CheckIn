@@ -4,16 +4,19 @@ import { useLocation } from "react-router-dom";
 
 const TitleBar: FC = () => {
     const location = useLocation()
-    
+
     const handleCloseWindow = () => {
-        if (window.electronAPI) { 
-            window.electronAPI.removeWindow(location.pathname)
+        if (window.electronAPI) {
+            let route = '/clock/clockIn'
+            if(location.pathname === '/home')route = location.pathname
+            console.log(route) 
+            window.electronAPI.removeWindow(route)
         }
         else {
             window.close()
         }
     }
-
+    
     return (
         <div className={styles.titleBar}>
             <div className={styles.title}>LEC - CheckIn</div>

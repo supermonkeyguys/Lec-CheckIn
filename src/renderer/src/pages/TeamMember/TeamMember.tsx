@@ -3,18 +3,18 @@ import ContentComponent from "../../components/ContentComponent/Component";
 import PageInfo from "../../components/PageInfo";
 import { Avatar, Button, Card, Col, message, Row, Spin, Typography } from "antd";
 import { useGetMembersInfo } from "../../hooks/User/useGetMembersInfo";
-import styles from './TeamMember.scss'
 import { getGrade } from "../Profile/Profile";
 import { connectRankingSocket } from "../ClockIn/ClockRanking/utils/socket";
+import { formatDuration } from "../ClockIn/ClockRecord/utils";
 
 const { Text } = Typography
 
 interface UserItem {
-  userId: string;
   nickname: string;
   avatarUrl: string;
   grade: string;
   pointsBalance: number;
+  todayDuration: number;
 }
 
 
@@ -45,7 +45,7 @@ const GradeFilter: FC<{
   );
 };
 
-const MemberCard: FC<UserItem> = ({ nickname, grade, pointsBalance, avatarUrl }) => {
+const MemberCard: FC<UserItem> = ({ nickname, grade, pointsBalance, avatarUrl, todayDuration }) => {
   return (
     <Card hoverable style={{ borderRadius: 8 }}>
       <Row align="middle" justify="space-between">
@@ -65,7 +65,7 @@ const MemberCard: FC<UserItem> = ({ nickname, grade, pointsBalance, avatarUrl })
             总计积分：{pointsBalance}
           </Text>
           <Text type="secondary" style={{ display: "block", marginTop: 2 }}>
-            今日: {0}h
+            今日: {formatDuration(todayDuration)}
           </Text>
         </Col>
       </Row>
@@ -99,7 +99,7 @@ const GradeGroup: FC<{
       </Row>
       <Row gutter={[16, 16]}>
         {members.map((member) => (
-          <Col key={member.userId} xs={24} sm={12} md={8}>
+          <Col key={member.nickname} xs={24} sm={12} md={8}>
             <MemberCard {...member} />
           </Col>
         ))}

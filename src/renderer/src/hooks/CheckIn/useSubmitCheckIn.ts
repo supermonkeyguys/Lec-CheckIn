@@ -8,8 +8,9 @@ import { submitCheckInService } from "@renderer/services/clock";
 export function useSubmitCheckIn() {
     const dispatch = useDispatch()
 
-    const { run: submitCheckIn, loading, data } = useRequest(
+    const { run: submitCheckIn, loading } = useRequest(
         async (params: SubmitCheckInParams) => {
+            console.log(params)
             const res = submitCheckInService(params);
             return res;
         },
@@ -21,10 +22,11 @@ export function useSubmitCheckIn() {
                 dispatch(addCheckInRecord(newRecord));
             },
             onError(err) {
+                console.log(err)
                 throw new  Error('打卡失败')
             }
         }
     )
 
-    return { loading, submitCheckIn, data }
+    return { loading, submitCheckIn }
 }

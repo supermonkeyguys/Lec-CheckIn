@@ -1,0 +1,28 @@
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.videoContainer {
+  height: calc(100vh - 300px);
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 16px;
+  overflow: hidden;
+
+  :global(.ant-card-body) {
+    padding: 0;
+    height: 100%;
+  }
+}
+
+.controlBarWrapper {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}

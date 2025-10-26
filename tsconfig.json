@@ -13,6 +13,7 @@
   },
   "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
   "include": [
+    "src/",
     "src/**/*.ts", 
     "src/**/*.tsx", 
     "types/*.d.ts",
