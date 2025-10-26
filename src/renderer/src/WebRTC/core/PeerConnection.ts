@@ -3,7 +3,7 @@ export class PeerConnection {
 
   constructor(
     private peerId: string,
-    private config: RTCConfiguration,
+    config: RTCConfiguration,
     private callbacks: {
       onTrack: (stream: MediaStream) => void
       onIceCandidate: (candidate: RTCIceCandidate) => void

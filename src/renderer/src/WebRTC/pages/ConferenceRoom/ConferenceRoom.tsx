@@ -1,8 +1,6 @@
-
-
 import { FC, useEffect, useState } from 'react'
 import styles from './ConferenceRoom.module.scss'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useWebRTC } from '@renderer/WebRTC/hooks/useWebRTC'
 import { Card, message, Modal, Spin } from 'antd'
 import { CLOCKIN_PAGE_PATHNAME } from '@renderer/router/router'
@@ -11,8 +9,6 @@ import ContentComponent from '@renderer/components/ContentComponent/Component'
 import PageInfo from '@renderer/components/PageInfo'
 import VideoGrid from '@renderer/WebRTC/components/VideoGrid/VideoGrid'
 import ControlBar from '@renderer/WebRTC/components/ControlBar/ControlBar'
-
-
 
 const ConferenceRoom: FC = () => {
     const { roomId } = useParams<{ roomId: string }>()
@@ -24,7 +20,6 @@ const ConferenceRoom: FC = () => {
         remoteParticipants,
         isMicOn,
         isCameraOn,
-        isConnected,
         toggleMic,
         toggleCamera,
         leaveRoom,

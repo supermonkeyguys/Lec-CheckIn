@@ -1,4 +1,4 @@
-import { ClockCircleOutlined, CommentOutlined, GiftOutlined, HomeOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, CommentOutlined, GiftOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu, message } from "antd";
 import { FC } from "react";
 import { DRAWCARD_PAGE_PATHNAME, ROUTES, } from "../../router/router";
