@@ -2,7 +2,7 @@ import { message } from "antd";
 import axios from "axios";
 import { getToken } from "../utils/use-Token";
 const instance = axios.create({
-  baseURL: 'http://localhost:8080/',
+  baseURL: 'http://43.138.244.158:8080/',
   timeout: 10 * 1000,
   headers: {},
 });
@@ -18,7 +18,6 @@ instance.interceptors.request.use(
     const isPublic = publicPaths.some(path => config.url?.startsWith(path));
     if (!isPublic) {
       const token = await getToken()
-      console.log(token)
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
       }

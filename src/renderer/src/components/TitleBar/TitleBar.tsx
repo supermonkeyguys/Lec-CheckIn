@@ -8,19 +8,29 @@ const TitleBar: FC = () => {
     const handleCloseWindow = () => {
         if (window.electronAPI) {
             let route = '/clock/clockIn'
-            if(location.pathname === '/home')route = location.pathname
-            console.log(route) 
+            if (location.pathname === '/home') route = location.pathname
+            console.log(route)
             window.electronAPI.removeWindow(route)
         }
         else {
             window.close()
         }
     }
-    
+
+    const handleMinimizeWindow = () => {
+        if (window.electronAPI) {
+            let route = '/clock/clockIn'
+            if (location.pathname === '/home') route = location.pathname
+            console.log(route)
+            window.electronAPI.minimizeWindow(route)
+        }
+    } 
+
     return (
         <div className={styles.titleBar}>
             <div className={styles.title}>LEC - CheckIn</div>
-            <div>
+            <div className={styles.windowControls}>
+                <button onClick={handleMinimizeWindow} className={styles.minimizeBtn}>−</button>
                 <button onClick={handleCloseWindow} className={styles.closeBtn}>×</button>
             </div>
         </div>

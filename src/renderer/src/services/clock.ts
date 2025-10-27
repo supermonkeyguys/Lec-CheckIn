@@ -23,6 +23,7 @@ export async function submitCheckInService(params: SubmitCheckInParams): Promise
     checkInDate: checkInDate.toISOString(),
     duration
   })
+
   return data
 }
 

@@ -30,7 +30,7 @@ const ClockStart: FC<{
     const handleStopClock = async () => {
         await stop()
         onCheckInSuccess!()
-        await submitCheckIn({
+        submitCheckIn({
             startTime: new Date(startTime),
             endTime: new Date(),
             checkInDate: new Date(),

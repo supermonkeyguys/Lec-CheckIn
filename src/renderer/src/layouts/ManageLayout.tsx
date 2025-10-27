@@ -5,15 +5,37 @@ import styles from './ManageLayout.module.scss'
 import TitleBar from "@renderer/components/TitleBar/TitleBar";
 import useSettingSync from "@renderer/hooks/Setting/useLoadSetting";
 import { ScreenPickerModal } from "@renderer/WebRTC/components/ScreenPickerModal/ScreenPickerModal";
+import { useSetting } from "@renderer/hooks/useSetting";
+import { updateSetting } from "@renderer/store/settingReducer";
+import { useDispatch } from "react-redux";
 
 const ManageLayout: FC = () => {
     const location = useLocation()
+    const dispatch = useDispatch()
+    const { settings } = useSetting()
     const [pickState, setPickState] = useState<{
         onSelect: (source: any) => void,
         onCancel: () => void
     } | null>(null)
     const pathname = location.pathname
     useSettingSync()
+
+    useEffect(() => {
+        const restoreBackground = async () => {
+          if (settings.backgroundType === 'video') {
+            const buffer = await window.electronAPI?.getBgVideoBuffer()
+            if (buffer) {
+              const blob = new Blob([buffer], { type: 'video/mp4' })
+              const videoUrl = URL.createObjectURL(blob)
+              dispatch(updateSetting({
+                backgroundType: "video",
+                backgroundVideoSrc: videoUrl,
+              }));
+            }
+          }
+        };
+        restoreBackground()
+      }, []);
 
     useEffect(() => {
         const handleScreenPicker = (e: CustomEvent) => {
@@ -32,7 +54,7 @@ const ManageLayout: FC = () => {
         setPickState(null)
     }
 
-    const handleSelect = (source:any) => {
+    const handleSelect = (source: any) => {
         pickState?.onSelect(source)
         setPickState(null)
     }
@@ -47,7 +69,7 @@ const ManageLayout: FC = () => {
                 <Outlet />
             </div>
             {pickState && (
-                <ScreenPickerModal 
+                <ScreenPickerModal
                     onSelect={handleSelect}
                     onClose={handleClose}
                 />

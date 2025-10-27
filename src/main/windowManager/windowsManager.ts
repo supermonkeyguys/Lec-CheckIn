@@ -13,16 +13,18 @@ export function createAppWindow(name: string, route: string) {
   const width = name === '/home' ? 1000 : 1400;
   const height = name === '/home' ? 700 : 900;
 
-  const preloadPath = path.join(__dirname, '../preload/index.js')
+  const preloadPath = path.join(__dirname, '../preload/index.cjs')
 
   const win = new BrowserWindow({
     width: width,
     height: height,
     frame: false,
     resizable: false,
+    icon:path.join(__dirname, '../build//icon.ico'),
     webPreferences: {
       webSecurity:false,
-      nodeIntegration:true,
+      allowRunningInsecureContent:true,
+      nodeIntegration:false,
       contextIsolation:true,
       preload: preloadPath,
       sandbox:false
@@ -34,7 +36,10 @@ export function createAppWindow(name: string, route: string) {
     win.loadURL(`${process.env.VITE_DEV_SERVER_URL}/#${route}`)
     console.log(`${process.env.VITE_DEV_SERVER_URL}/#${route}`)
   } else {
-    win.loadFile(path.join(__dirname, '../renderer/index.html'))
+    win.loadFile(
+      path.join(__dirname, '../renderer/index.html'),
+      { hash: route }
+    )
   }
 
   win.on('closed', () => {
@@ -55,3 +60,13 @@ export function removeWindow(name:string):boolean{
 
   return false
 }
+
+export function minimizeWindow(name:string) {
+  const win = windows.get(name)
+  if(win) {
+    win.minimize()
+    return true
+  }
+
+  return false
+} 

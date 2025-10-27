@@ -16,6 +16,10 @@ function ensureDir(p: string) {
   if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true })
 }
 
+function toFileUrl(p: string) {
+  return 'file://' + p.replace(/\\/g, '/')
+}
+
 export class BackgroundManager {
   private currentBackground: string | null = null
 
@@ -50,28 +54,29 @@ export class BackgroundManager {
     const cacheDir = this.getCacheDir()
     const filename = `bg_${Date.now()}.mp4`
     const dest = path.join(cacheDir, filename)
+
     try {
       await this.convertVideo(sourcePath, dest)
     } catch (err: any) {
       console.warn('转码失败，回退原文件:', err?.message ?? err)
       await copyFile(sourcePath, dest)
     }
+
     if (this.currentBackground) {
       const old = path.join(cacheDir, this.currentBackground)
       if (fs.existsSync(old)) await unlink(old)
     }
+
     this.currentBackground = filename
-    const url = this.getBackgroundFileUrl()
+    const fileUrl = toFileUrl(dest)
 
-    if (url) {
-      UserStore.save({
-        backgroundType: 'video',
-        backgroundVideoSrc: url,
-        backgroundImageSrc: undefined
-      })
-    }
+    UserStore.save({
+      backgroundType: 'video',
+      backgroundVideoSrc: fileUrl,
+      backgroundImageSrc: undefined
+    })
 
-    return url
+    return fileUrl
   }
 
   async setBackgroundImage(sourcePath: string): Promise<string | null> {
@@ -79,51 +84,79 @@ export class BackgroundManager {
     const ext = path.extname(sourcePath) || '.png'
     const filename = `bg_${Date.now()}${ext}`
     const dest = path.join(cacheDir, filename)
+
     await copyFile(sourcePath, dest)
+
     if (this.currentBackground) {
       const old = path.join(cacheDir, this.currentBackground)
       if (fs.existsSync(old)) await unlink(old)
     }
+
     this.currentBackground = filename
-    const url = this.getBackgroundFileUrl()
+    const fileUrl = toFileUrl(dest)
 
-    if (url) {
-      UserStore.save({
-        backgroundType: 'image',
-        backgroundImageSrc: url,
-        backgroundVideoSrc: undefined
-      })
-    }
+    UserStore.save({
+      backgroundType: 'image',
+      backgroundImageSrc: fileUrl,
+      backgroundVideoSrc: undefined
+    })
 
-    return url
+    return fileUrl
   }
 
+  // 仅返回 file:// URL，不创建 blob:
   getBackgroundFileUrl(): string | null {
     if (this.currentBackground) {
       const cacheDir = this.getCacheDir()
       const p = path.join(cacheDir, this.currentBackground)
-      return 'file://' + p.replace(/\\/g, '/')
+      return fs.existsSync(p) ? toFileUrl(p) : null
     }
 
     try {
-      const s = UserStore.load() 
-      const url = 
-        s.backgroundType === 'video' ? s.backgroundVideoSrc
-        : s.backgroundType === 'image' ? s.backgroundImageSrc
-        : null
+      const s = UserStore.load()
+      const url =
+        s.backgroundType === 'video'
+          ? s.backgroundVideoSrc
+          : s.backgroundType === 'image'
+          ? s.backgroundImageSrc
+          : null
 
       if (url && url.startsWith('file://')) {
-        const filePath = url.replace('file://','') 
-        const fname = path.basename(filePath) 
+        const filePath = url.replace('file://', '')
+        const fname = path.basename(filePath)
         this.currentBackground = fname
-
-        if(!fs.existsSync(filePath))return null
-        return url
+        return fs.existsSync(filePath) ? url : null
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
-    return null 
+    return null
+  }
+
+  async getBackgroundVideoBuffer(): Promise<Buffer | null> {
+    const url = this.getBackgroundFileUrl()
+    if (!url || !url.startsWith('file://')) return null // 避免 blob:
+    const filePath = url.replace(/^file:\/\//, '').replace(/\//g, path.sep)
+    if (!fs.existsSync(filePath)) return null
+    try {
+      return await fs.promises.readFile(filePath)
+    } catch (err) {
+      console.error('读取视频失败:', err)
+      return null
+    }
+  }
+
+  async getBackgroundImageBuffer(): Promise<Buffer | null> {
+    const url = this.getBackgroundFileUrl()
+    if (!url || !url.startsWith('file://')) return null // 避免 blob:
+    const filePath = url.replace(/^file:\/\//, '').replace(/\//g, path.sep)
+    if (!fs.existsSync(filePath)) return null
+    try {
+      return await fs.promises.readFile(filePath)
+    } catch (err) {
+      console.error('读取图片失败:', err)
+      return null
+    }
   }
 
   async clearAllForActiveUser() {

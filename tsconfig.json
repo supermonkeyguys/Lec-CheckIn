@@ -2,6 +2,7 @@
   "files": [],
   "compilerOptions": {
     "jsx": "react-jsx",
+    "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "baseUrl": ".",

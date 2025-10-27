@@ -1,6 +1,6 @@
 {
   "name": "electron-checkin-lec",
-  "type": "module",
+  "type": "commonjs",
   "version": "1.0.0",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
@@ -11,10 +11,10 @@
       "app": "."
     },
     "appId": "com.yourcompany.checkin",
-    "productName": "签到系统",
+    "productName": "LecCheckIn",
     "win": {
       "target": "nsis",
-      "icon": "./public/icon.ico"
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,

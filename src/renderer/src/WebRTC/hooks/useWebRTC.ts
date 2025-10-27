@@ -48,7 +48,7 @@ export const useWebRTC = () => {
       webrtcManager = new WebRTCManager(
         {
           iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-          signalingUrl: 'http://localhost:8080/signaling'
+          signalingUrl: 'http://43.138.244.158:8080/signaling'
         },
         {
           onRemoteStream: (socketId, stream) => {

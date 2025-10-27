@@ -14,6 +14,7 @@ declare global {
     electronAPI?: {
       openWindow: (route: string) => void
       removeWindow: (route: string) => void
+      minimizeWindow: (route: string) => void
       setToken: (token: string, remember: boolean) => Promise<boolean>
       getToken: (username:string) => Promise<any>
       removeToken: () => Promise<boolean>
@@ -41,6 +42,9 @@ declare global {
       clearUserSetting: () => Promise<void>
 
       getDesktopSources: () => Promise<any>
+
+      getBgVideoBuffer: () => Promise<any>
+      getBgImageBuffer: () => Promise<any>
     }
   }
 }

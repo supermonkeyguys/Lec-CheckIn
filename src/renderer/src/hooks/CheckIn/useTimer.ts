@@ -32,7 +32,9 @@ export function useTimer() {
   }
 
   const start = async () => {
-    dispatch(setStartTime(new Date().toISOString()))
+    const startTime = new Date().toISOString()
+    console.log(startTime)
+    dispatch(setStartTime(startTime || ''))
     await window.electronAPI?.startTimer()
     await syncWithMain()
   }
@@ -41,8 +43,7 @@ export function useTimer() {
     const finalTime = await window.electronAPI?.stopTimer()
     setStatus({ currentTime: finalTime || 0, isRunning: false })
     dispatch(setStartTime(''))
-    await syncWithMain
-    return finalTime || 0
+    await syncWithMain()
   }
 
   const clear = () => {

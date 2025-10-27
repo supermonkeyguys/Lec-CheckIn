@@ -4,15 +4,14 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()],
     build: {
       outDir: 'out/main',
       rollupOptions: {
-        external: [], 
+        external: [],
         output: {
           assetFileNames: 'assets/[name].[ext]',
           chunkFileNames: 'chunks/[name].js',
-          entryFileNames: '[name].js',
+          entryFileNames: '[name].js'
         }
       }
     }
@@ -20,16 +19,16 @@ export default defineConfig({
   preload: {
     plugins: [
       externalizeDepsPlugin({
-        exclude: ['@electron-toolkit/preload'] 
+        exclude: ['@electron-toolkit/preload']
       })
     ],
     build: {
-      outDir: 'out/preload',
+      outDir: 'out/preload/index.cjs',
       rollupOptions: {
         input: path.resolve(__dirname, 'src/preload/index.js'),
         output: {
           entryFileNames: 'index.js',
-          format:'cjs',
+          format: 'cjs'
         }
       }
     }
@@ -38,24 +37,28 @@ export default defineConfig({
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src/renderer/src'),
-        '@renderer': path.resolve(__dirname,'src/renderer/src')
+        '@renderer': path.resolve(__dirname, 'src/renderer/src')
       }
     },
-    plugins: [
-      react(),
-    ],
+    plugins: [react()],
     build: {
+      outDir: 'out/renderer',
       rollupOptions: {
-        input:path.resolve(__dirname,'src/renderer/index.html')  
+        input: path.resolve(__dirname, 'src/renderer/index.html')
       }
     },
     server: {
-      port:5137,
+      port: 5137,
       proxy: {
         '/api': {
-          target: 'http://localhost:8080',
+          target: 'http://43.138.244.158:8080',
           changeOrigin: true,
           secure: false
+        },
+        '/socket.io:': {
+          target: 'http://43.138.244.158:8080',
+          changeOrigin: true,
+          ws: true,
         }
       }
     }

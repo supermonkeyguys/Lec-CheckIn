@@ -22,4 +22,11 @@ export function registerBackgroundHandlers() {
         return { canceled: true, error: error }
       }
     })
+
+    ipcMain.handle('get-background-video-buffer',async () => {
+      return await backgroundManager.getBackgroundVideoBuffer()
+    })
+    ipcMain.handle('get-background-image-buffer',async () => {
+      return await backgroundManager.getBackgroundImageBuffer()
+    })
 } 

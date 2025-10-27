@@ -125,7 +125,7 @@ const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, a
                         <Avatar size={90} src={avatar} className={styles.avatar} />
                         <Upload
                             className={styles.uploadOverlay}
-                            action={`http://localhost:8080/api/user/avatar`}
+                            action={`http://43.138.244.158:8080/api/user/avatar`}
                             name='avatar'
                             headers={{
                                 Authorization: `Bearer ${token}`

@@ -14,22 +14,22 @@ const BackgroundSetting: FC = () => {
   const [pendingType, setPendingType] = useState(backgroundType);
   const { run, loading } = useUpdateUserSetting({})
 
-  const pendingTypeRef = useRef(pendingType);
+  const pendingTypeRef = useRef(pendingType)
   useEffect(() => {
-    pendingTypeRef.current = pendingType;
-  }, [pendingType]);
+    pendingTypeRef.current = pendingType
+  }, [pendingType])
 
   const handleTypeChange = (e: any) => {
-    const newType = e.target.value;
+    const newType = e.target.value
     if (newType === "none") {
-      dispatch(updateSetting({ backgroundType: 'none' }));
+      dispatch(updateSetting({ backgroundType: 'none' }))
     }
-    setPendingType(newType);
+    setPendingType(newType)
   };
 
   const handleLocalVideoUpload = async () => {
     if (!window.electronAPI) {
-      message.error("Electron API 不可用");
+      message.error("Electron API 不可用")
       return;
     }
 
@@ -42,21 +42,71 @@ const BackgroundSetting: FC = () => {
 
       if (!res || res.canceled || !res.filePaths?.length) {
         setUploading(false)
-        message.info("已取消选择视频");
+        message.info("已取消选择视频")
         return;
       }
 
-      const videoPath = res.filePaths[0];
-      console.log(videoPath)
-      const optimizedPath = await window.electronAPI.setBackgroundVideo(videoPath);
-      console.log(optimizedPath)
+      const videoPath = res.filePaths[0]
+      await window.electronAPI.setBackgroundVideo(videoPath)
 
-      run({backgroundType:'video'})
+      // 获取背景视频的 Buffer 并生成 Blob URL
+      const raw = await window.electronAPI.getBgVideoBuffer()
+      if(!raw) {
+        message.error('加载失败')
+        return 
+      }
+
+      const u8 = raw?.data && Array.isArray(raw.data) ? new Uint8Array(raw.data) : new Uint8Array(raw)
+      const blob = new Blob([u8], { type: 'video/mp4' })
+      const url = URL.createObjectURL(blob)
+
+      run({ backgroundType: 'video' })
       dispatch(updateSetting({
         backgroundType: "video",
-        backgroundVideoSrc: optimizedPath,
+        backgroundVideoSrc: url,
       }));
-      message.success("视频背景设置成功");
+      message.success("视频背景设置成功")
+    } catch (err) {
+      console.error("error:", err);
+      message.error("设置失败，请重试")
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!window.electronAPI) return
+
+    try {
+      setUploading(true);
+      const res = await window.electronAPI.showOpenDialog({
+        properties: ['openFile'],
+        filters: [{ name: '图片文件', extensions: ['jpg', 'jpeg', 'png', 'gif'] }],
+      });
+
+      if (!res || res.canceled || !res.filePaths?.length) return
+
+      const src = res.filePaths[0];
+      await window.electronAPI.setBackgroundImage(src)
+
+      const raw = await window.electronAPI?.getBgImageBuffer()
+      if (!raw) {
+        message.error('图片加载失败')
+        return
+      }
+      
+      const u8 = raw?.data && Array.isArray(raw.data) ? new Uint8Array(raw.data) : new Uint8Array(raw)
+      const blob = new Blob([u8], { type: 'video/mp4' })
+      const url = URL.createObjectURL(blob)
+
+      run({ backgroundType: 'image' })
+      dispatch(updateSetting({
+        backgroundType: 'image',
+        backgroundImageSrc: url,
+        backgroundVideoSrc: '',
+      }));
+
+      message.success('图片背景设置成功');
     } catch (err) {
       console.error("error:", err);
       message.error("设置失败，请重试");
@@ -65,34 +115,12 @@ const BackgroundSetting: FC = () => {
     }
   };
 
-const handleImageUpload = async () => {
-  if (!window.electronAPI) return
-
-  const res = await window.electronAPI.showOpenDialog({
-    properties: ['openFile'],
-    filters: [{ name: '图片文件', extensions: ['jpg', 'jpeg', 'png', 'gif'] }],
-  })
-  if (!res || res.canceled || !res.filePaths?.length) return
-
-  const src = res.filePaths[0]
-  const fileUrl = await window.electronAPI.setBackgroundImage(src)
-
-  run({backgroundType:'image'})
-  dispatch(updateSetting({
-    backgroundType: 'image',
-    backgroundImageSrc: fileUrl, 
-    backgroundVideoSrc: '',
-  }))
-
-  message.success('图片背景设置成功')
-}
-
   const handleUploadClick = () => {
-    if (pendingType === "video") handleLocalVideoUpload()
+    if (pendingType === "video") handleLocalVideoUpload();
     else if (pendingType === 'image') {
-      handleImageUpload()
+      handleImageUpload();
     }
-  }
+  };
 
   return (
     <Card>
@@ -103,7 +131,7 @@ const handleImageUpload = async () => {
             onChange={handleTypeChange}
             value={pendingType}
           >
-            <Radio value="none">无</Radio>
+            <Radio value="none" onClick={() => run({ backgroundType: 'none' })}>无</Radio>
             <Radio value="image">图片</Radio>
             <Radio value="video">视频</Radio>
           </Radio.Group>
