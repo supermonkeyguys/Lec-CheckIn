@@ -25,7 +25,7 @@ const BackgroundSetting: FC = () => {
       dispatch(updateSetting({ backgroundType: 'none' }))
     }
     setPendingType(newType)
-  };
+  }
 
   const handleLocalVideoUpload = async () => {
     if (!window.electronAPI) {
@@ -60,10 +60,13 @@ const BackgroundSetting: FC = () => {
       const blob = new Blob([u8], { type: 'video/mp4' })
       const url = URL.createObjectURL(blob)
 
-      run({ backgroundType: 'video' })
+      console.log('blobUrl: ', url)
+
+      run({ backgroundType: 'video', backgroundVideoSrc:url })
       dispatch(updateSetting({
         backgroundType: "video",
         backgroundVideoSrc: url,
+        backgroundImageSrc: '' , 
       }));
       message.success("视频背景设置成功")
     } catch (err) {
@@ -98,8 +101,9 @@ const BackgroundSetting: FC = () => {
       const u8 = raw?.data && Array.isArray(raw.data) ? new Uint8Array(raw.data) : new Uint8Array(raw)
       const blob = new Blob([u8], { type: 'video/mp4' })
       const url = URL.createObjectURL(blob)
+      console.log('url: ',url)
 
-      run({ backgroundType: 'image' })
+      run({ backgroundType: 'image', backgroundImageSrc: url })
       dispatch(updateSetting({
         backgroundType: 'image',
         backgroundImageSrc: url,

@@ -22,7 +22,6 @@ export function createAppWindow(name: string, route: string) {
     resizable: false,
     icon:path.join(__dirname, '../build//icon.ico'),
     webPreferences: {
-      webSecurity:false,
       allowRunningInsecureContent:true,
       nodeIntegration:false,
       contextIsolation:true,

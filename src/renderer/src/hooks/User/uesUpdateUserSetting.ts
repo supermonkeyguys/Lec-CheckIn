@@ -18,19 +18,16 @@ export function useUpdateUserSetting({
   const { reminderTime, reminderInterval } = useSetting()
   const { loading, run } = useRequest(
     async (settings: SettingState) => {
-      const toSaved: SettingState = {
-        ...settings
-      }
-
+      console.log(settings)
       try {
-        await window.electronAPI?.updateUserSetting(toSaved)
+        await window.electronAPI?.updateUserSetting(settings)
       } catch (err) {
         if (setPendingRemindTime) setPendingRemindTime(reminderTime)
         if (setRemindInterval) setRemindInterval(reminderInterval)
         throw new Error(err?.toString())
       }
 
-      dispatch(updateSetting(toSaved))
+      dispatch(updateSetting(settings))
 
       try {
         const res = await updateUserSetting(settings)
@@ -47,7 +44,6 @@ export function useUpdateUserSetting({
             return;
           }
           if (res?.updatedSetting) {
-            dispatch(updateSetting(res.updatedSetting));
             message.success("设置已保存并同步");
           } else {
             message.success("设置已保存（本地）");

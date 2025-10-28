@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import PageInfo from "../../components/PageInfo";
-import { Button, Card, Col, Modal, Row, Space, Typography } from "antd";
+import { Button, Card, Col, message, Modal, Row, Space, Typography } from "antd";
 import ContentComponent from "../../components/ContentComponent/Component";
 import { CaretRightOutlined, CheckCircleOutlined, ClockCircleOutlined, MenuOutlined, RightOutlined, TrophyFilled, } from "@ant-design/icons";
 import styles from './ClockIn.module.scss'
@@ -8,14 +8,17 @@ import { formatTime, transMsTos, } from "./utils";
 import { useNavigate } from "react-router-dom";
 import { POINTS_PAGE_PATHNAME, RECORD_PAGE_PATHNAME } from "../../router/router";
 import { useSubmitCheckIn } from "../../hooks/CheckIn/useSubmitCheckIn";
-import { useTimer } from "../../hooks/CheckIn/useTimer";
+import { STARTTIME_KEY, useTimer } from "../../hooks/CheckIn/useTimer";
 import ClockHeatmap from "./ClockRecord/ClockHeatMap";
+import { useDispatch } from "react-redux";
+import { setStartTime } from "@renderer/store/clockReducer";
 
 const { Title, Text } = Typography
 
 const ClockStart: FC<{
     onCheckInSuccess?: () => void
 }> = ({ onCheckInSuccess }) => {
+    const dispatch = useDispatch()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const { submitCheckIn, loading } = useSubmitCheckIn()
     const {
@@ -29,14 +32,24 @@ const ClockStart: FC<{
 
     const handleStopClock = async () => {
         await stop()
-        onCheckInSuccess!()
-        submitCheckIn({
-            startTime: new Date(startTime),
-            endTime: new Date(),
-            checkInDate: new Date(),
-            duration: currentTime
-        });
-        setIsModalOpen(true)
+
+        try {
+            submitCheckIn({
+                startTime: new Date(startTime),
+                endTime: new Date(),
+                checkInDate: new Date(),
+                duration: currentTime
+            });
+
+            dispatch(setStartTime(''))
+            localStorage.removeItem(STARTTIME_KEY)
+            onCheckInSuccess!()
+            setIsModalOpen(true)
+            if(currentTime < 5 * 60 * 60 * 1000)message.success('打卡成功')
+            else message.error('打卡超时作废')
+        } catch (err) {
+            console.error('提交失败')
+        }
     }
 
     const handleCloseModal = () => {

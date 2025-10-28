@@ -18,9 +18,9 @@ export async function submitCheckInService(params: SubmitCheckInParams): Promise
 
   const url = `/api/checkIn/submit`
   const data = await axios.post(url, {
-    startTime: startTime.toISOString(),
-    endTime: endTime.toISOString(),
-    checkInDate: checkInDate.toISOString(),
+    startTime: startTime,
+    endTime: endTime,
+    checkInDate: checkInDate,
     duration
   })
 

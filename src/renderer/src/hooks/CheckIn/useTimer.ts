@@ -8,6 +8,8 @@ type TimerStatus = {
   isRunning: boolean
 }
 
+export const STARTTIME_KEY = 'checkInStartTime'
+
 export function useTimer() {
   const dispatch = useDispatch()
   const startTime = useSelector((state: StateType) => state.checkIn.startTime)
@@ -33,8 +35,8 @@ export function useTimer() {
 
   const start = async () => {
     const startTime = new Date().toISOString()
-    console.log(startTime)
-    dispatch(setStartTime(startTime || ''))
+    dispatch(setStartTime(startTime))
+    localStorage.setItem(STARTTIME_KEY, startTime)
     await window.electronAPI?.startTimer()
     await syncWithMain()
   }
@@ -42,7 +44,6 @@ export function useTimer() {
   const stop = async () => {
     const finalTime = await window.electronAPI?.stopTimer()
     setStatus({ currentTime: finalTime || 0, isRunning: false })
-    dispatch(setStartTime(''))
     await syncWithMain()
   }
 
@@ -51,6 +52,16 @@ export function useTimer() {
   }
 
   useEffect(() => {
+    const saved = localStorage.getItem(STARTTIME_KEY)
+    if (saved) {
+      const d = new Date(saved)
+      if (!isNaN(d.getTime())) {
+        dispatch(setStartTime(saved))
+      } else {
+        localStorage.removeItem(STARTTIME_KEY)
+      }
+    }
+
     syncWithMain()
 
     const interval = setInterval(() => {

@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 const ManageLayout: FC = () => {
     const location = useLocation()
     const dispatch = useDispatch()
-    const { settings } = useSetting()
+    const { backgroundType } = useSetting()
     const [pickState, setPickState] = useState<{
         onSelect: (source: any) => void,
         onCancel: () => void
@@ -22,20 +22,35 @@ const ManageLayout: FC = () => {
 
     useEffect(() => {
         const restoreBackground = async () => {
-          if (settings.backgroundType === 'video') {
-            const buffer = await window.electronAPI?.getBgVideoBuffer()
-            if (buffer) {
-              const blob = new Blob([buffer], { type: 'video/mp4' })
-              const videoUrl = URL.createObjectURL(blob)
-              dispatch(updateSetting({
-                backgroundType: "video",
-                backgroundVideoSrc: videoUrl,
-              }));
+            console.log(backgroundType)
+            if (backgroundType === 'video') {
+                const buffer = await window.electronAPI?.getBgVideoBuffer()
+                console.log('buffer: ', buffer)
+                if (buffer) {
+                    const blob = new Blob([buffer], { type: 'video/mp4' })
+                    const videoUrl = URL.createObjectURL(blob)
+                    console.log(videoUrl)
+                    dispatch(updateSetting({
+                        backgroundType: "video",
+                        backgroundVideoSrc: videoUrl,
+                    }));
+                }
             }
-          }
+            else if(backgroundType === 'image') {
+                const buffer = await window.electronAPI?.getBgImageBuffer()
+                console.log(buffer)
+                if (buffer) {
+                    const blob = new Blob([buffer], { type:'image/jpg' })
+                    const imageUrl = URL.createObjectURL(blob)
+                    dispatch(updateSetting({
+                        backgroundType: "image",
+                        backgroundImageSrc: imageUrl
+                    }))
+                }
+            }
         };
         restoreBackground()
-      }, []);
+    }, []);
 
     useEffect(() => {
         const handleScreenPicker = (e: CustomEvent) => {

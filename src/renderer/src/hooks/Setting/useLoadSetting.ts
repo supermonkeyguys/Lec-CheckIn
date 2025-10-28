@@ -22,24 +22,11 @@ export default function useSettingSync(options: Options = {}) {
     ;(async () => {
       try {
         const cached = (await window.electronAPI?.getUserSetting()) ?? {}
-
-        let backgroundImageSrc
-        let backgroundVideoSrc
-        if (cached.backgroundType === 'image' && !backgroundImageSrc && window.electronAPI?.getCurrentBackground) {
-          try {
-            backgroundImageSrc = await window.electronAPI.getCurrentBackground()
-          } catch {}
-        } else if (cached.backgroundType === 'video' && !backgroundVideoSrc && window.electronAPI) {
-          try {
-            backgroundVideoSrc = await window.electronAPI?.getCurrentBackground()
-          } catch {}
-        }
+        console.log(cached)
 
         // 统一 dispatch，一次性合并
         dispatch(updateSetting({
           ...cached,
-          ...(backgroundImageSrc ? { backgroundImageSrc } : {}),
-          ...(backgroundVideoSrc ? { backgroundVideoSrc } : {}),
         }))
       } finally {
         hydratedRef.current = true

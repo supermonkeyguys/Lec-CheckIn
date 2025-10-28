@@ -22,7 +22,7 @@ export const TEAMMEMBER_PAGE_PATHNAME = clock_pathname + '/teamMember'
 export const RECORD_PAGE_PATHNAME = clock_pathname + '/record'
 export const POINTS_PAGE_PATHNAME = clock_pathname + '/points'
 export const SETTING_PAGE_PATHNAME = clock_pathname + '/setting'
-export const MEETING_LOBBY_PATHNAME = 'meeting'
+export const MEETING_LOBBY_PATHNAME = clock_pathname + '/meeting'
 export const CONFERENCE_ROOM_PATHNAME = 'conference/:roomId'
 
 const routerConfigure: Router = createHashRouter([
@@ -71,7 +71,7 @@ const routerConfigure: Router = createHashRouter([
                 element: <Setting />
             },
             {
-                path: MEETING_LOBBY_PATHNAME,
+                path: 'meeting',
                 element: <MeetingLobby />,
             },
             {

@@ -35,7 +35,7 @@ const Login: FC<PropsType> = ({ onSwitch }) => {
                 setTimeout(() => {
                     window.electronAPI!.openWindow('/clock/clockIn')
                     window.electronAPI!.removeWindow('/home')
-                }, 1000)
+                }, 500)
             },
             onError(err) {
                 message.error('登录失败')
