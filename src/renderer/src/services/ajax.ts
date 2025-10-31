@@ -1,57 +1,58 @@
-import { message } from "antd";
-import axios from "axios";
-import { getToken } from "../utils/use-Token";
+import { message } from 'antd'
+import axios from 'axios'
+import { getToken } from '../utils/use-Token'
+
+const devUrl = 'localhost'
+const proUrl = '43.138.244.158'
+
 const instance = axios.create({
-  baseURL: 'http://43.138.244.158:8080/',
+  baseURL: `http://${devUrl}:8080/`,
   timeout: 10 * 1000,
-  headers: {},
-});
+  headers: {}
+})
 
 // request 拦截
 instance.interceptors.request.use(
   async (config) => {
-    const publicPaths = [
-      '/api/user/login',
-      '/api/user/register',
-    ];
+    const publicPaths = ['/api/user/login', '/api/user/register']
 
-    const isPublic = publicPaths.some(path => config.url?.startsWith(path));
+    const isPublic = publicPaths.some((path) => config.url?.startsWith(path))
     if (!isPublic) {
       const token = await getToken()
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
       }
     }
-    
-    return config;
+
+    return config
   },
   (error) => Promise.reject(error)
-);
+)
 
 // response 拦截
 instance.interceptors.response.use((res) => {
-  const resData = (res.data || {}) as ResType;
-  const { errno, data, msg } = resData;
+  const resData = (res.data || {}) as ResType
+  const { errno, data, msg } = resData
 
   if (errno !== 0) {
     if (msg) {
-      message.error(msg);
+      message.error(msg)
     }
 
     throw new Error(msg || '请求失败')
   }
 
-  return data as any;
-});
+  return data as any
+})
 
-export default instance;
+export default instance
 
 export type ResType = {
-  errno: number;
-  data?: ResDataType;
-  msg?: string;
-};
+  errno: number
+  data?: ResDataType
+  msg?: string
+}
 
 export type ResDataType = {
-  [key: string]: any;
-};
+  [key: string]: any
+}

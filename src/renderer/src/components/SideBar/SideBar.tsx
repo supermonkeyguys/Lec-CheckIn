@@ -1,13 +1,21 @@
-import { ClockCircleOutlined, CommentOutlined, GiftOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, CommentOutlined, DoubleRightOutlined, GiftOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu, message } from "antd";
 import { FC } from "react";
 import { DRAWCARD_PAGE_PATHNAME, ROUTES, } from "../../router/router";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from './SideBar.module.scss'
+import { getUsername, removeUsername } from "@renderer/utils/use-Token";
 
 const SideBar: FC = () => {
     const nav = useNavigate()
     const location = useLocation()
+    const handleLogout = () => {
+        window.electronAPI?.userLogout(getUsername())
+        removeUsername()
+        window.electronAPI?.removeWindow('/clock/clockIn')
+        window.electronAPI?.openWindow('/home')
+    }
+
 
     const menuItems = [
         {
@@ -40,14 +48,24 @@ const SideBar: FC = () => {
             icon: <SettingOutlined />,
             key: ROUTES.SETTING
         },
+        { 
+            label: '退出',
+            icon: <DoubleRightOutlined />,
+            key: 'logout'
+        }
     ]
 
     const handleOnChange = ({ key }: { key: string }) => {
         const route = menuItems.find(m => m!.key === key)
+
         if (route) {
             if (route.key === DRAWCARD_PAGE_PATHNAME) {
                 message.info('火速开发中')
                 return
+            }
+            else if(route.key === 'logout') {
+                handleLogout()
+                return 
             }
             nav(route.key)
         }

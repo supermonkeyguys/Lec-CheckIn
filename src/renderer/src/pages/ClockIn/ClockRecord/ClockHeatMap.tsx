@@ -73,7 +73,7 @@ const ClockHeatmap: FC = () => {
                             name="时长（小时）"
                             domain={[0, 'dataMax + 1']}
                             tick={{ fontSize: 12 }}
-                            tickFormatter={(value: any) => `${value}h`}
+                            tickFormatter={(value: any) => `${value.toFixed(1)}h`}
                         />
                         <Tooltip
                             formatter={(value: any) => [`${value}小时`, '打卡时长']}

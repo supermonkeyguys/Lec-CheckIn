@@ -117,7 +117,6 @@ const TeamMember: FC = () => {
   useEffect(() => {
     run(currentGrade === "all" ? "all" : currentGrade);
   }, [currentGrade]);
-  console.log(data)
 
   useEffect(() => {
     const disconnect = connectRankingSocket(

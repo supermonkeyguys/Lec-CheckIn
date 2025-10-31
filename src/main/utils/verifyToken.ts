@@ -1,6 +1,9 @@
 import axios from 'axios'
 
-const baseUrl = 'http://43.138.244.158:8080'
+const devUrl = 'localhost'
+const proUrl = '43.138.244.158'
+
+const baseUrl = `http://${devUrl}:8080`
 
 export async function verifyToken(token:string): Promise<any>  {
     try {
@@ -11,6 +14,7 @@ export async function verifyToken(token:string): Promise<any>  {
         return res.data.data
     } catch (err) {
         console.log(err)
-        return false
+       
+        throw new Error('Token 已过期')
     }
 }

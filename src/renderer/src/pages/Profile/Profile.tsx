@@ -9,7 +9,6 @@ import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import styles from './Profile.module.scss'
 import { useUpdateInfo } from '../../hooks/User/useUpdateInfo';
 import { useAuth } from '../../hooks/User/useAuth';
-import { getUsername, removeUsername } from '@renderer/utils/use-Token';
 
 const { Text } = Typography
 
@@ -106,12 +105,6 @@ const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, a
         return true
     }
 
-    const handleLogout = () => {
-        window.electronAPI?.userLogout(getUsername())
-        removeUsername()
-        window.electronAPI?.removeWindow('/clock/clockIn')
-        window.electronAPI?.openWindow('/home')
-    }
 
     if (loading) return (
         <div>加载中...</div>
@@ -160,13 +153,6 @@ const PersonalCard: FC<PersonalCardProps> = ({ nickname, pointsBalance, grade, a
                         </Row>
                     </Col>
                 </Row>
-                <Button
-                    className={styles.exitBtn}
-                    onClick={handleLogout}
-                    type='link'
-                >
-                    退出
-                </Button>
             </div>
         </Card>
     )

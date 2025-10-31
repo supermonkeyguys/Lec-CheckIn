@@ -62,7 +62,7 @@ const BackgroundSetting: FC = () => {
 
       console.log('blobUrl: ', url)
 
-      run({ backgroundType: 'video', backgroundVideoSrc:url })
+      run({ backgroundType: 'video' })
       dispatch(updateSetting({
         backgroundType: "video",
         backgroundVideoSrc: url,
@@ -103,7 +103,7 @@ const BackgroundSetting: FC = () => {
       const url = URL.createObjectURL(blob)
       console.log('url: ',url)
 
-      run({ backgroundType: 'image', backgroundImageSrc: url })
+      run({ backgroundType: 'image' })
       dispatch(updateSetting({
         backgroundType: 'image',
         backgroundImageSrc: url,

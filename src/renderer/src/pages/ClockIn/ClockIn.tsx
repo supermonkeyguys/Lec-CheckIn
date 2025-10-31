@@ -45,7 +45,7 @@ const ClockStart: FC<{
             localStorage.removeItem(STARTTIME_KEY)
             onCheckInSuccess!()
             setIsModalOpen(true)
-            if(currentTime < 5 * 60 * 60 * 1000)message.success('打卡成功')
+            if (currentTime < 5 * 60 * 60 * 1000) message.success('打卡成功')
             else message.error('打卡超时作废')
         } catch (err) {
             console.error('提交失败')
@@ -98,6 +98,9 @@ const ClockStart: FC<{
             <Card className={styles.cardContainer}>
                 <ClockCircleOutlined style={{ fontSize: '32px', color: 'rgba(22, 119, 255)' }} />
                 <Title level={4} style={{ margin: '0' }}>Start CheckIn</Title>
+                <Text style={{ color: 'gold' }}>
+                    {`今日打卡时长 ${1}`}
+                </Text>
                 <Text style={{ margin: "0" }}>
                     {isRunning ? `打卡中...` : '未开始打卡'}
                 </Text>

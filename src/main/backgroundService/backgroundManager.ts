@@ -135,7 +135,7 @@ export class BackgroundManager {
 
   async getBackgroundVideoBuffer(): Promise<Buffer | null> {
     const url = this.getBackgroundFileUrl()
-    if (!url || !url.startsWith('file://')) return null // 避免 blob:
+    if (!url || !url.startsWith('file://')) return null 
     const filePath = url.replace(/^file:\/\//, '').replace(/\//g, path.sep)
     if (!fs.existsSync(filePath)) return null
     try {
@@ -148,7 +148,8 @@ export class BackgroundManager {
 
   async getBackgroundImageBuffer(): Promise<Buffer | null> {
     const url = this.getBackgroundFileUrl()
-    if (!url || !url.startsWith('file://')) return null // 避免 blob:
+    console.log("url: ",url)
+    if (!url || !url.startsWith('file://')) return null 
     const filePath = url.replace(/^file:\/\//, '').replace(/\//g, path.sep)
     if (!fs.existsSync(filePath)) return null
     try {

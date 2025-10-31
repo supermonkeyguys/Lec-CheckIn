@@ -63,3 +63,11 @@ export async function fetchWeeklyClockData(): Promise<WeeklyResponse> {
   const res = (await axios.get(url)) as WeeklyResponse
   return res
 }
+
+export async function startCheckInState(startTime: string): Promise<ResDataType> {
+  const url = '/api/checkIn/startCheckIn'
+  const res = (await axios.post(url,startTime)) as ResDataType
+
+  return res
+}
+

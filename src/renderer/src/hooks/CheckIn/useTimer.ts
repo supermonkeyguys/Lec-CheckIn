@@ -1,5 +1,7 @@
+import { startCheckInState } from '@renderer/services/clock'
 import { StateType } from '@renderer/store'
 import { setStartTime } from '@renderer/store/clockReducer'
+import { message } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -34,6 +36,14 @@ export function useTimer() {
   }
 
   const start = async () => {
+    const inTargetNetwork = await window.electronAPI?.checkTargetNetwork()
+    await startCheckInState(new Date().toISOString())
+
+    if(!inTargetNetwork) { 
+      message.error('请在团队内打卡')
+      return;
+    }
+
     const startTime = new Date().toISOString()
     dispatch(setStartTime(startTime))
     localStorage.setItem(STARTTIME_KEY, startTime)

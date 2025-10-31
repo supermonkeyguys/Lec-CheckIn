@@ -6,51 +6,17 @@ import TitleBar from "@renderer/components/TitleBar/TitleBar";
 import useSettingSync from "@renderer/hooks/Setting/useLoadSetting";
 import { ScreenPickerModal } from "@renderer/WebRTC/components/ScreenPickerModal/ScreenPickerModal";
 import { useSetting } from "@renderer/hooks/useSetting";
-import { updateSetting } from "@renderer/store/settingReducer";
-import { useDispatch } from "react-redux";
+import GlobalBg from "@renderer/components/GlobalBg/GlobalBg";
 
 const ManageLayout: FC = () => {
     const location = useLocation()
-    const dispatch = useDispatch()
-    const { backgroundType } = useSetting()
     const [pickState, setPickState] = useState<{
         onSelect: (source: any) => void,
         onCancel: () => void
     } | null>(null)
+    const { theme, backgroundType } = useSetting()
     const pathname = location.pathname
     useSettingSync()
-
-    useEffect(() => {
-        const restoreBackground = async () => {
-            console.log(backgroundType)
-            if (backgroundType === 'video') {
-                const buffer = await window.electronAPI?.getBgVideoBuffer()
-                console.log('buffer: ', buffer)
-                if (buffer) {
-                    const blob = new Blob([buffer], { type: 'video/mp4' })
-                    const videoUrl = URL.createObjectURL(blob)
-                    console.log(videoUrl)
-                    dispatch(updateSetting({
-                        backgroundType: "video",
-                        backgroundVideoSrc: videoUrl,
-                    }));
-                }
-            }
-            else if(backgroundType === 'image') {
-                const buffer = await window.electronAPI?.getBgImageBuffer()
-                console.log(buffer)
-                if (buffer) {
-                    const blob = new Blob([buffer], { type:'image/jpg' })
-                    const imageUrl = URL.createObjectURL(blob)
-                    dispatch(updateSetting({
-                        backgroundType: "image",
-                        backgroundImageSrc: imageUrl
-                    }))
-                }
-            }
-        };
-        restoreBackground()
-    }, []);
 
     useEffect(() => {
         const handleScreenPicker = (e: CustomEvent) => {
@@ -64,6 +30,18 @@ const ManageLayout: FC = () => {
         }
     }, [])
 
+    useEffect(() => {
+        document.body.classList.remove('light', 'dark', 'has-background-media');
+
+        document.body.classList.add(theme || 'light');
+
+        document.body.classList.add(theme || 'light');
+        if (backgroundType === 'image' || backgroundType === 'video') {
+            document.body.classList.add('has-background-media');
+        }
+    }, [theme, backgroundType])
+
+
     const handleClose = () => {
         pickState?.onCancel()
         setPickState(null)
@@ -76,6 +54,7 @@ const ManageLayout: FC = () => {
 
     return (
         <div className={`${styles.layoutContainer}`}>
+            <GlobalBg />
             <div>
                 <TitleBar />
             </div>

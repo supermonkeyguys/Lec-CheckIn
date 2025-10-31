@@ -15,8 +15,6 @@ export function registerTokenHandler() {
   })
 
   ipcMain.handle('get-token', async (_, username: string) => {
-    console.log('username: ', username)
-    console.log('getToken: ', store.get(`account.${username}.authToken`))
     return {
       token: store.get(`account.${username}.authToken`),
       remember: store.get(`account.${username}.autoLogin`)
@@ -47,7 +45,6 @@ export function registerLogHandler() {
       backgroundManager.resetForNewSession()
       sessionManager.loginWithFixedToken(localToken, username || '666')
 
-      console.log('login: ', token, 'username: ', username)
       store.set(`account.${username}.authToken`, token)
       store.set(`account.${username}.autoLogin`, remember)
       setActiveUser(username)

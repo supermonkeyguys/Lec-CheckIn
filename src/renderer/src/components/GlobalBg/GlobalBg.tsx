@@ -4,8 +4,6 @@ import styles from './GlobalBg.module.scss';
 
 const GlobalBg: FC = () => {
     const { backgroundImageSrc, backgroundVideoSrc, backgroundType } = useSetting()
-    console.log('backgroundImageSrc: ', backgroundImageSrc)
-    console.log('backgroundVideoSrc: ', backgroundVideoSrc)
 
     return (
         <div className={styles.globalBg}>

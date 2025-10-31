@@ -1,5 +1,5 @@
 import { app } from 'electron'
-import { createAppWindow } from './windowManager/windowsManager'
+import { createAppTray, createAppWindow } from './windowManager/windowsManager'
 import { registerTimerHandlers } from './checkInManager/ipcHandlers'
 import { getActiveUser, getStoredToken, registerLogHandler, registerTokenHandler } from './tokenManager/tokenHandler'
 import { verifyToken } from './utils/verifyToken'
@@ -9,6 +9,7 @@ import { registerBackgroundHandlers } from './backgroundService/ipcHandler'
 import crypto from 'crypto'
 import { sessionManager } from './session/sessionManager'
 import { backgroundManager } from './backgroundService/backgroundManager'
+import { registerVerifyIPHandler } from './utils/verifyIp'
 
 app.whenReady().then(async () => {
   registerWindowHandlers()
@@ -17,6 +18,7 @@ app.whenReady().then(async () => {
   registerSettingHandlers()
   registerBackgroundHandlers()
   registerLogHandler()
+  registerVerifyIPHandler()
 
   let route = '/home'
   const username = getActiveUser()
@@ -34,6 +36,7 @@ app.whenReady().then(async () => {
   }
 
   createAppWindow(route, route)
+  createAppTray()
 })
 
 function ensureSessionForToken(serverToken: string, username: string) {

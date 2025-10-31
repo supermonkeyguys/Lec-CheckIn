@@ -26,7 +26,9 @@ const api = {
   getDesktopSources: async () => ipcRenderer.invoke('get-desktop-sources'),
 
   getBgVideoBuffer: async () => ipcRenderer.invoke('get-background-video-buffer'),
-  getBgImageBuffer: async () => ipcRenderer.invoke('get-background-image-buffer')
+  getBgImageBuffer: async () => ipcRenderer.invoke('get-background-image-buffer'),
+
+  checkTargetNetwork: async () => ipcRenderer.invoke('check-target-network')
 }
 
 if (process.contextIsolated) {

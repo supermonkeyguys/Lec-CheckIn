@@ -33,9 +33,9 @@ export const UserStore = {
   },
 
   save(patch: Partial<UserSetting>): UserSetting {
+    console.log(patch)
     const { settingsFile } = sessionManager.pathsForActiveUser()
     const old = this.load()
-    console.log('patch: ', patch)
     const merged: UserSetting = { ...old, ...patch, updateAt: Date.now() }
     atomicWriteJSON(settingsFile, merged)
     return merged

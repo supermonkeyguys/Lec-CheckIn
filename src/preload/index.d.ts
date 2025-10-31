@@ -45,6 +45,8 @@ declare global {
 
       getBgVideoBuffer: () => Promise<any>
       getBgImageBuffer: () => Promise<any>
+
+      checkTargetNetwork: () => Promise<boolean>
     }
   }
 }

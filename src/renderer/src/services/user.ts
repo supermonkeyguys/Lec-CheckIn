@@ -67,3 +67,10 @@ export async function getUserSetting():Promise<ResDataType> {
   const data = await axios.get(url)
   return data
 }
+
+export async function getCurrentCheckInState(): Promise<ResDataType> {
+  const url = '/api/user/checkInState'
+  const data = await axios.get(url) as ResDataType
+
+  return data
+} 
