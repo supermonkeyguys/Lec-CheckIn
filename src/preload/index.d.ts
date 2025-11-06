@@ -18,10 +18,9 @@ declare global {
       setToken: (token: string, remember: boolean) => Promise<boolean>
       getToken: (username:string) => Promise<any>
       removeToken: () => Promise<boolean>
-      startTimer: () => Promise<void>
-      stopTimer: () => Promise<number>
-      getElapsedTime: () => Promise<number>
-      isRunning: () => Promise<boolean>
+
+      timerSync: (elapsed:number) => Promise<boolean>
+      timerStopReminder: () => Promise<boolean>
 
       userLogin: (payload: { token: string; username: string; remember: boolean }) => {
         success: boolean

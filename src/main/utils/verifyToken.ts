@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const devUrl = 'localhost'
-const proUrl = '43.138.244.158'
+// const proUrl = '43.138.244.158'
 
 const baseUrl = `http://${devUrl}:8080`
 

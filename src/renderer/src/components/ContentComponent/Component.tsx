@@ -1,20 +1,15 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import styles from './Component.module.scss'
 
 type PropsType = {
-    componentList: FC<any>[];
+    children: ReactNode
 }
 
-const ContentComponent: FC<PropsType> = ({ componentList }) => {
+const ContentComponent: FC<PropsType> = ({ children }) => {
 
     return (
         <div className={styles.pageContainer}>
-            {
-                componentList &&
-                componentList.map(((C, index) => (
-                    <C key={index} className={styles.item} />
-                )))
-            }
+            {children}
             <div></div>
         </div>
     )

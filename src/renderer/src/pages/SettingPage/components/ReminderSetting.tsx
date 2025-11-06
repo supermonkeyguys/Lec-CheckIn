@@ -1,6 +1,6 @@
 import { SettingOutlined } from "@ant-design/icons";
+import { useSetting } from "@renderer/hooks/Setting/useSetting";
 import { useUpdateUserSetting } from "@renderer/hooks/User/uesUpdateUserSetting";
-import { useSetting } from "@renderer/hooks/useSetting";
 import { SettingState } from "@renderer/store/settingReducer";
 import { Button, Card, Form, InputNumber, } from "antd";
 import { FC, useState } from "react";

@@ -66,8 +66,21 @@ export async function fetchWeeklyClockData(): Promise<WeeklyResponse> {
 
 export async function startCheckInState(startTime: string): Promise<ResDataType> {
   const url = '/api/checkIn/startCheckIn'
-  const res = (await axios.post(url,startTime)) as ResDataType
+  const res = (await axios.post(url, { startTime: startTime })) as ResDataType
 
   return res
 }
 
+export async function endCheckInState(endTime: string): Promise<ResDataType> {
+  const url = '/api/checkIn/endCheckIn'
+  const res = (await axios.post(url, { endTime: endTime })) as ResDataType
+
+  return res
+}
+
+export async function addCheckInRecord(duration: number): Promise<ResDataType> {
+  const url = '/api/checkIn/addRecord'
+  const res = (await axios.post(url,{ duration: duration })) as ResDataType
+
+  return res
+}

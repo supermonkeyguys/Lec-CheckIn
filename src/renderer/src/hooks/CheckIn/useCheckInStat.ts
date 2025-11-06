@@ -4,7 +4,7 @@ import { useRequest } from "ahooks";
 
 export function useCheckInStat() {
 
-    const { data,run } = useRequest(
+    const { data,run, refresh } = useRequest(
         async () => {
             const data = getCheckInStatService()
             return data 
@@ -14,5 +14,5 @@ export function useCheckInStat() {
         }
     )
 
-    return { data, run }
+    return { data, run, refresh }
 }

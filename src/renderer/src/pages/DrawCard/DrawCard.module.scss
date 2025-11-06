@@ -1,0 +1,396 @@
+// DrawCard.module.scss
+
+// ===== 主容器 =====
+.slotMachine {
+  padding: 40px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+// ===== 三个轮盘的容器 =====
+.rollers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  perspective: 1000px; // 3D效果
+
+  @media (max-width: 768px) {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
+
+// ===== 单个轮盘 =====
+.roller {
+  position: relative;
+  width: 120px;
+  height: 300px;
+  overflow: hidden;
+  border: 4px solid #ffd700;
+  border-radius: 15px;
+  background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 50%, #f8f9fa 100%);
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.1),
+    0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  @media (max-width: 768px) {
+    width: 100px;
+    height: 250px;
+  }
+}
+
+// ===== 滚动的图标列表 =====
+.imageList {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  will-change: transform;
+  transform: translateZ(0); // 开启硬件加速
+}
+
+// ===== 单个图标 =====
+.ywbg {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  user-select: none;
+  background: transparent;
+  transition: background 0.2s ease;
+
+  @media (max-width: 768px) {
+    height: 83.33px; // 保持比例
+    font-size: 40px;
+  }
+}
+
+// ===== 上下渐变遮罩 =====
+.maskTop,
+.maskBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100px;
+  pointer-events: none;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    height: 80px;
+  }
+}
+
+.maskTop {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 249, 250, 1) 0%,
+    rgba(248, 249, 250, 0.8) 30%,
+    transparent 100%
+  );
+}
+
+.maskBottom {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(248, 249, 250, 1) 0%,
+    rgba(248, 249, 250, 0.8) 30%,
+    transparent 100%
+  );
+}
+
+// ===== 中奖指示线 =====
+.pointer {
+  position: absolute;
+  left: -5px;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100px;
+  border: 4px solid #ff4d4f;
+  border-left: none;
+  border-right: none;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow:
+    0 0 15px rgba(255, 77, 79, 0.5),
+    inset 0 0 10px rgba(255, 77, 79, 0.3);
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+
+  // 左侧箭头
+  &::before {
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 12px 15px 12px 0;
+    border-color: transparent #ff4d4f transparent transparent;
+  }
+
+  // 右侧箭头
+  &::after {
+    right: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 12px 0 12px 15px;
+    border-color: transparent transparent transparent #ff4d4f;
+  }
+
+  @media (max-width: 768px) {
+    height: 83.33px;
+  }
+}
+
+// ===== 控制按钮区域 =====
+.controllers {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.btn {
+  min-width: 220px;
+  height: 60px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(24, 144, 255, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    min-width: 180px;
+    height: 50px;
+    font-size: 18px;
+  }
+}
+
+// ===== 结果显示区域 =====
+.resultWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.result {
+  display: flex;
+  flex-direction: row;
+  margin-top: 30px;
+  padding: 25px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.resultItems {
+  gap: 30px;
+  margin-bottom: 15px;
+
+  @media (max-width: 768px) {
+    gap: 15px;
+  }
+}
+
+.resultItem {
+  font-size: 72px;
+  animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+
+  @media (max-width: 768px) {
+    font-size: 56px;
+  }
+}
+
+// ===== 中奖样式 =====
+.winTextWrapper {
+    display: flex;
+    align-items: center;
+}
+
+.winResult {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border: 3px solid #ff6b00;
+  animation: winPulse 1s ease-in-out infinite;
+  box-shadow:
+    0 0 30px rgba(255, 215, 0, 0.6),
+    0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.winText {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ff4d4f;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  animation: bounce 1s ease-in-out infinite;
+
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
+}
+
+.winCard {
+  animation: cardShake 0.6s ease-in-out;
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
+}
+
+// ===== 动画定义 =====
+
+// 淡入上移
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 弹出效果
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 中奖脉冲
+@keyframes winPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
+  }
+}
+
+// 弹跳
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+// 卡片抖动
+@keyframes cardShake {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-8px) rotate(-1deg);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(8px) rotate(1deg);
+  }
+}
+
+// 旋转（可选，用于加载状态）
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ===== 额外特效：光晕效果 =====
+.roller::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ffd700, #ff6b00, #ffd700, #ff6b00);
+  border-radius: 15px;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+.roller:hover::before {
+  opacity: 0.6;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+// ===== 加载状态指示器（可选）=====
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: #1890ff;
+  animation: rotate 2s linear infinite;
+}

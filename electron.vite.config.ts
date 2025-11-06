@@ -3,7 +3,7 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
 const devUrl = 'localhost'
-const proUrl = '43.138.244.158'
+// const proUrl = '43.138.244.158'
 
 export default defineConfig({
   main: {

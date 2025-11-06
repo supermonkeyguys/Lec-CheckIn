@@ -7,10 +7,8 @@ const api = {
   openWindow: (route: string) => ipcRenderer.send('open-window', route),
   removeWindow: (route: string) => ipcRenderer.send('close-window', route),
   minimizeWindow: (route: string) => ipcRenderer.send('minimize-window', route),
-  startTimer: () => ipcRenderer.invoke('timer-start'),
-  stopTimer: () => ipcRenderer.invoke('timer-stop'),
-  getElapsedTime: () => ipcRenderer.invoke('timer-get'),
-  isRunning: () => ipcRenderer.invoke('timer-isRunning'),
+  timerSync: (elapsed: number) => ipcRenderer.invoke('timer-sync',elapsed),
+  timerStopReminder: () => ipcRenderer.invoke('timer-stop-reminder'),
 
   userLogin: (credentials) => ipcRenderer.invoke('user-login', credentials),
   userLogout: (username: string) => ipcRenderer.invoke('user-logout', username),

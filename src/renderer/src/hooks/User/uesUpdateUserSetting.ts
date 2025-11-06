@@ -3,7 +3,7 @@ import { SettingState, updateSetting } from '@renderer/store/settingReducer'
 import { useRequest } from 'ahooks'
 import { message } from 'antd'
 import { useDispatch } from 'react-redux'
-import { useSetting } from '../useSetting'
+import { useSetting } from '../Setting/useSetting'
 
 type UpdateRemindPropsType = {
   setPendingRemindTime?: (rt: any) => void
@@ -18,7 +18,6 @@ export function useUpdateUserSetting({
   const { reminderTime, reminderInterval } = useSetting()
   const { loading, run } = useRequest(
     async (settings: SettingState) => {
-      console.log(settings)
       try {
         await window.electronAPI?.updateUserSetting(settings)
       } catch (err) {

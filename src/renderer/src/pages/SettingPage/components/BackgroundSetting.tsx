@@ -3,9 +3,10 @@ import { Button, Card, Form, message, Radio, Space } from "antd";
 import { FC, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { UploadOutlined } from "@ant-design/icons";
-import { useSetting } from "@renderer/hooks/useSetting";
-import styles from "./common.module.scss";
 import { useUpdateUserSetting } from "@renderer/hooks/User/uesUpdateUserSetting";
+import { useSetting } from "@renderer/hooks/Setting/useSetting";
+import styles from "./common.module.scss";
+
 
 const BackgroundSetting: FC = () => {
   const dispatch = useDispatch();

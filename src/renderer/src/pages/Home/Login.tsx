@@ -8,7 +8,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import styles from './common.module.scss'
 import { loginUserService } from "../../services/user";
-import { setUsername } from "@renderer/utils/use-Token";
+import { setTokenSession, setUsername } from "@renderer/utils/use-Token";
 type PropsType = {
     onSwitch: (f: boolean) => void
 }
@@ -24,6 +24,8 @@ const Login: FC<PropsType> = ({ onSwitch }) => {
             const { token } = res
 
             setUsername(username)
+            setTokenSession(token)
+            console.log(token)
             await window.electronAPI?.userLogin({token, username,remember})
 
             return res

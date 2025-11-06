@@ -9,14 +9,14 @@ import dayjs from "dayjs";
 
 const ClockRanking: FC = () => {
     const [dateRange, setDateRange] = useState<DateRange>({ startDate: null, endDate: null })
-     
+
     const handleSearch = (value: any) => {
         if (value.dateRange && value.dateRange.length === 2) {
             const [start, end] = value.dateRange
             const endTime = dayjs(end)
             const startTime = dayjs(start)
-            const startOneDay = startTime.add(1,'day')
-            const endTimePlusOneDay = endTime.add(2,'day')
+            const startOneDay = startTime.add(1, 'day')
+            const endTimePlusOneDay = endTime.add(2, 'day')
             const formattedStartDate = formatDate(startOneDay.toDate())
             const formattedEndDate = formatDate(endTimePlusOneDay.toDate())
             setDateRange({
@@ -28,20 +28,18 @@ const ClockRanking: FC = () => {
     }
 
     return (
-        <ContentComponent
-            componentList={[
-                () => <PageInfo title="打卡记录" desc="记录你的打卡历史" />,
-                () => <RecordFilter onSearch={handleSearch} />,
-                () => <RecordTable dateRange={dateRange} />,
-                () => <RecordStat />
-            ]}
-        />
+        <ContentComponent>
+            <PageInfo title="打卡记录" desc="记录你的打卡历史" />
+            <RecordFilter onSearch={handleSearch} />
+            <RecordTable dateRange={dateRange} />
+            <RecordStat />
+        </ContentComponent>
     )
 }
 
-export default ClockRanking 
+export default ClockRanking
 
 
-function formatDate(date:Date)  {
+function formatDate(date: Date) {
     return date.toISOString().split('T')[0]
 } 

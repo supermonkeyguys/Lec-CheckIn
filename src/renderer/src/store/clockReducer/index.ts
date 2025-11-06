@@ -36,6 +36,7 @@ export const checkInSlice = createSlice({
     },
     setStartTime: (state: CheckInState, action: PayloadAction<string>) => {
       state.startTime = action.payload
+      state.isRunning = !state.isRunning
     },
     addCheckInRecord: (state: CheckInState, action: PayloadAction<CheckInRecord>) => {
       const newRecord = action.payload

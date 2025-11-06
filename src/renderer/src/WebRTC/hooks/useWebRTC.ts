@@ -36,7 +36,7 @@ export const useWebRTC = () => {
     isMicOn,
     isCameraOn,
     isConnected,
-    isScreenSharing // 👈 从 Redux 获取状态
+    isScreenSharing // 从 Redux 获取状态
   } = useSelector((state: StateType) => state.webrtc)
 
   const [localParticipant, setLocalParticipant] = useState<Participant | null>(null)

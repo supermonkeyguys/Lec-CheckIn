@@ -1,65 +1,48 @@
 import { BrowserWindow, Notification } from 'electron'
-import { performance } from 'perf_hooks'
 import { clearInterval } from 'timers'
 import { UserStore } from '../user/userContext'
 
 
-interface TimerState {
-  isRunning: boolean
-  startTime: number | null
-  accumulatedTime: number
-  currentWindowId: number | null
+interface ReminderState {
+  lastElapsedTime: number
+  lastNotifyAt: number | null
+  hasSentWarning: boolean
 }
 
-export const timerState: TimerState = {
-  isRunning: false,
-  startTime: null,
-  accumulatedTime: 0,
-  currentWindowId: null
+export const reminderState: ReminderState = {
+  lastElapsedTime:0,
+  lastNotifyAt: null,
+  hasSentWarning: false,
 }
 
 const DEFAULT_REMINDER_TIME_MS = 3 * 60 * 60 * 1000   
 const DEFAULT_REMINDER_INTERVAL_MS = 10 * 60 * 1000  
 
-let hasSentWaring = false
-let waringCheckInterval: NodeJS.Timeout | null = null
-let lastNotifyAt: number | null = null
+let reminderCheckInterval:NodeJS.Timeout | null = null
 
-export const getElapsedTime = (): number => {
-  if (!timerState.isRunning || timerState.startTime === null) {
-    return timerState.accumulatedTime
-  }
-  return timerState.accumulatedTime + (performance.now() - timerState.startTime)
-}
+export const syncTimerState = (elapsedTime:number) => {
+  reminderState.lastElapsedTime = elapsedTime
 
-export const startTimer = (windowId: number) => {
-  if (timerState.isRunning) return
-  timerState.isRunning = true
-  timerState.startTime = performance.now()
-  timerState.currentWindowId = windowId
-
-  lastNotifyAt = null
-  hasSentWaring = false
-
-  if (!waringCheckInterval) {
-    waringCheckInterval = setInterval(() => {
+  if(!reminderCheckInterval) {
+    reminderCheckInterval = setInterval(() => {
       checkAndSendWaring()
-    }, 30_000)
+    },30_000)
   }
+
+  checkAndSendWaring()
 }
 
-export const stopTimer = () => {
-  timerState.isRunning = false
-  timerState.startTime = null
-  timerState.accumulatedTime = 0
-  timerState.currentWindowId = null
-
-  if (waringCheckInterval) {
-    clearInterval(waringCheckInterval)
-    waringCheckInterval = null
+export const stopReminderService = () => {
+  if(reminderCheckInterval) {
+    clearInterval(reminderCheckInterval)
+    reminderCheckInterval = null
   }
-  hasSentWaring = false
+
+  reminderState.lastElapsedTime = 0
+  reminderState.hasSentWarning = false
+  reminderState.lastNotifyAt = null
 }
+
 
 export const checkAndSendWaring = () => {
   const s = UserStore.load() || {}
@@ -72,14 +55,14 @@ export const checkAndSendWaring = () => {
       ? s.reminderInterval
       : DEFAULT_REMINDER_INTERVAL_MS
 
-  const elapsed = getElapsedTime()
+  const elapsed = reminderState.lastElapsedTime
 
   if (elapsed < reminderTime)return
 
   const now = Date.now() 
-  const allowFirst = !hasSentWaring
-  const allowInterval = lastNotifyAt
-    ? (now - lastNotifyAt) >= reminderInterval
+  const allowFirst = !reminderState.hasSentWarning
+  const allowInterval = reminderState.lastNotifyAt
+    ? (now - reminderState.lastNotifyAt) >= reminderInterval
     : true
 
   if(!(allowFirst || allowInterval)) return
@@ -87,7 +70,7 @@ export const checkAndSendWaring = () => {
   if (Notification.isSupported()) {
     const notification = new Notification({
       title: '⏰ 打卡提醒',
-      body: `您已打卡 ${(elapsed / (60 * 1000)).toFixed(1)} 分钟，\n即将达到今日上限 (8小时), 请及时提交! `,
+      body: `您已打卡 ${(elapsed / (60 * 1000)).toFixed(1)} 分钟，\n即将达到今日上限 (5小时), 请及时提交! `,
       silent: false
     })
 
@@ -101,6 +84,6 @@ export const checkAndSendWaring = () => {
     })
   }
 
-  hasSentWaring = true
-  lastNotifyAt = now
+  reminderState.hasSentWarning = true
+  reminderState.lastNotifyAt = now
 }

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type UserStateType = {
     nickname: string;
-    avatarUrl: string
+    avatarUrl: string; 
 }
 
 const INIT_STATE: UserStateType = {

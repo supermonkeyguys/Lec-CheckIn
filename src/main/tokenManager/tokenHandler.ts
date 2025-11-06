@@ -3,7 +3,6 @@ import { default as Store } from 'electron-store'
 import crypto from 'crypto'
 import { backgroundManager } from '../backgroundService/backgroundManager'
 import { sessionManager } from '../session/sessionManager'
-import { stopTimer } from '../checkInManager/timerService'
 
 const store = new Store()
 
@@ -54,10 +53,10 @@ export function registerLogHandler() {
   )
 
   ipcMain.handle('user-logout', async (_, username: string) => {
-    stopTimer()
     backgroundManager.resetForNewSession()
     sessionManager.logout()
 
+    removeActiveUser()
     store.delete(`account.${username}.authToken`)
     store.delete(`account.${username}.autoLogin`)
 
@@ -70,4 +69,7 @@ export function setActiveUser(username: string) {
 }
 export function getActiveUser() {
   return store.get('activeUser') as string
+}
+export function removeActiveUser() {
+  store.delete('activeUser') 
 }

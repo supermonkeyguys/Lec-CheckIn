@@ -9,6 +9,9 @@ import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import styles from './Profile.module.scss'
 import { useUpdateInfo } from '../../hooks/User/useUpdateInfo';
 import { useAuth } from '../../hooks/User/useAuth';
+import Account from './MyAccount/Account';
+import { getGrade } from '@renderer/utils/getGrade';
+
 
 const { Text } = Typography
 
@@ -24,8 +27,8 @@ const NameElem = ({ name, refreshGetInfo }: { name: string; refreshGetInfo: (s: 
     const [tempName, setTempName] = useState(name)
     const { updateInfo } = useUpdateInfo()
 
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.value)
         setTempName(e.target.value)
     }
 
@@ -168,30 +171,12 @@ const Profile: FC = () => {
 
 
     return (
-        <ContentComponent
-            componentList={[
-                () => <PageInfo title='个人页面' desc='查看个人信息' />,
-                () => userInfo && <PersonalCard avatarUrl={''} nickname={''} pointsBalance={0} grade={''} {...userInfo} />
-            ]}
-        />
+        <ContentComponent>
+            <PageInfo title='个人页面' desc='查看个人信息' />
+            {userInfo && <PersonalCard avatarUrl={''} nickname={''} pointsBalance={0} grade={''} {...userInfo} />}
+            <Account refresh={refreshGetInfo}  />
+        </ContentComponent>
     );
 };
 
 export default Profile;
-
-export function getGrade(grade: string) {
-    switch (grade) {
-        case 'all':
-            return '全部'
-        case 'freshman':
-            return '大一'
-        case 'sophomore':
-            return '大二'
-        case 'junior':
-            return '大三'
-        case 'senior':
-            return '大四'
-        default:
-            return '???'
-    }
-}

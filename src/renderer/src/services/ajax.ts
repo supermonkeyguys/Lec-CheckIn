@@ -1,9 +1,9 @@
 import { message } from 'antd'
 import axios from 'axios'
-import { getToken } from '../utils/use-Token'
+import { getTokenSession } from '../utils/use-Token'
 
 const devUrl = 'localhost'
-const proUrl = '43.138.244.158'
+// const proUrl = '43.138.244.158'
 
 const instance = axios.create({
   baseURL: `http://${devUrl}:8080/`,
@@ -13,12 +13,12 @@ const instance = axios.create({
 
 // request 拦截
 instance.interceptors.request.use(
-  async (config) => {
+  (config) => {
     const publicPaths = ['/api/user/login', '/api/user/register']
 
     const isPublic = publicPaths.some((path) => config.url?.startsWith(path))
     if (!isPublic) {
-      const token = await getToken()
+      const token = getTokenSession()
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`
       }

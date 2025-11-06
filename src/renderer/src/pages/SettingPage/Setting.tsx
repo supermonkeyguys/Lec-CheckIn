@@ -7,13 +7,12 @@ import BackgroundSetting from "./components/BackgroundSetting";
 const Setting: FC = () => {
 
     return (
-        <ContentComponent
-            componentList={[
-                () => <PageInfo title='设置' desc="调整你的App" />,
-                () => <RemindSetting />,
-                () => <BackgroundSetting />,
-            ]}
-        />
+        <ContentComponent>
+            <PageInfo title='设置' desc="调整你的App" />
+            <RemindSetting />
+            <BackgroundSetting />
+        </ContentComponent>
+
     )
 }
 

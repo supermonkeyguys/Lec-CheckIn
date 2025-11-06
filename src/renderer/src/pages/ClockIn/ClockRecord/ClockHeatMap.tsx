@@ -1,10 +1,12 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Card, Spin, Alert } from 'antd';
 import { useRequest } from 'ahooks';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import dayjs from 'dayjs';
 import Title from 'antd/es/typography/Title';
 import { fetchWeeklyClockData } from '@renderer/services/clock';
+import { useSelector } from 'react-redux';
+import { StateType } from '@renderer/store';
 
 
 interface DailyTotal {
@@ -15,12 +17,39 @@ interface DailyTotal {
 }
 
 const ClockHeatmap: FC = () => {
-    const { data, loading, error } = useRequest(
-        async () => await fetchWeeklyClockData(),
+    const [cachedData, setCachedData] = useState<DailyTotal[] | null>(null)
+    const isRunning = useSelector((state: StateType) => state.checkIn.isRunning)
+    const { data, run, loading, error } = useRequest(
+        async () => {
+            const res = await fetchWeeklyClockData()
+            setCachedData(processRawData(res))
+            return res
+        },
+        {
+            manual: true,
+        }
     );
-    const processedData: DailyTotal[] = useMemo(() => {
-        if (!data?.dailyTotals) return [];
-        return data.dailyTotals.map((item: any) => {
+
+    useEffect(() => {
+        if (cachedData === null) {
+            console.log(1)
+            run()
+        } 
+        else if (!isRunning) {
+            console.log(2)
+            const timer = setTimeout(() => {
+                run()
+            }, 100)
+            return () => clearInterval(timer)
+        }
+
+        return
+    }, [isRunning, run])
+
+    const processRawData = (rawData: any): DailyTotal[] => {
+        if (!rawData?.dailyTotals) return []
+
+        return rawData.dailyTotals.map((item: any) => {
             const date = dayjs(item.date + 'T00:00:00');
             return {
                 ...item,
@@ -28,19 +57,28 @@ const ClockHeatmap: FC = () => {
                 dayLabel: date.format('ddd'),
             };
         });
-    }, [data]);
+    }
 
-    if (loading) {
+    const displayData = useMemo(() => {
+        if (cachedData) return cachedData
+        if (data) return processRawData(data)
+        console.log('step 3')
+        return []
+    }, [cachedData, data])
+
+    const isFirstLoading = loading && !cachedData && !data
+
+    if (isFirstLoading) {
         return (
             <Card>
                 <div style={{ textAlign: 'center', padding: '50px 0' }}>
-                    <Spin size="large" tip="加载数据中..." />
+                    <Spin size='large' tip='加载数据中...' />
                 </div>
             </Card>
-        );
+        )
     }
 
-    if (error) {
+    if (error && !cachedData) {
         return (
             <Card>
                 <Alert
@@ -59,7 +97,7 @@ const ClockHeatmap: FC = () => {
             <div style={{ width: '100%', height: 300 }}>
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart
-                        data={processedData}
+                        data={displayData}
                         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
                         <CartesianGrid strokeDasharray="3 3" />

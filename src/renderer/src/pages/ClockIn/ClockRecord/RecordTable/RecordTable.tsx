@@ -3,7 +3,7 @@ import { Table, Button, Typography, Flex, Tag, Card } from 'antd';
 import type { TableProps } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import { DateRange } from '../../../../store/clockReducer/type';
-import { formatDuration } from '../utils';
+import { formatDuration } from '../utils/utils';
 import { useCheckInRecord } from '../../../../hooks/CheckIn/useCheckInRecord';
 import { useGetAllCheckInRecord } from '../../../../hooks/CheckIn/useGetAllCheckInRecord';
 import dayjs from 'dayjs';

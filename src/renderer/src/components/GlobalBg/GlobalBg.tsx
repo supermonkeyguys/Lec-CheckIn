@@ -1,4 +1,4 @@
-import { useSetting } from "@renderer/hooks/useSetting";
+import { useSetting } from "@renderer/hooks/Setting/useSetting";
 import { FC } from "react";
 import styles from './GlobalBg.module.scss';
 

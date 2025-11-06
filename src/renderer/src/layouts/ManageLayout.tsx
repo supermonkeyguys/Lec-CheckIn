@@ -5,8 +5,8 @@ import styles from './ManageLayout.module.scss'
 import TitleBar from "@renderer/components/TitleBar/TitleBar";
 import useSettingSync from "@renderer/hooks/Setting/useLoadSetting";
 import { ScreenPickerModal } from "@renderer/WebRTC/components/ScreenPickerModal/ScreenPickerModal";
-import { useSetting } from "@renderer/hooks/useSetting";
 import GlobalBg from "@renderer/components/GlobalBg/GlobalBg";
+import { useSetting } from "@renderer/hooks/Setting/useSetting";
 
 const ManageLayout: FC = () => {
     const location = useLocation()

@@ -30,7 +30,7 @@ const ConferenceRoom: FC = () => {
 
     useEffect(() => {
         if (!roomId || roomId === 'roomId') {
-            console.log("room:",roomId)
+            console.log("room:", roomId)
             message.error('房间不存在')
             navigate(CLOCKIN_PAGE_PATHNAME)
             return
@@ -82,37 +82,29 @@ const ConferenceRoom: FC = () => {
     }
 
     return (
-        <ContentComponent 
-            componentList={[
-                () => (
-                    <PageInfo 
-                        title={`会议室 ${roomId}`}
-                        desc={`在线人数: ${remoteParticipants.length + 1}`}
-                    />
-                ),
-                () => (
-                    <Card className={styles.videoContainer}>
-                        <VideoGrid 
-                            participants={remoteParticipants}
-                            localParticipant={localParticipant}
-                        />
-                    </Card>
-                ), 
-                () => (
-                    <div className={styles.controlBarWrapper}>
-                        <ControlBar 
-                            isMicOn={isMicOn}
-                            isCameraOn={isCameraOn}
-                            onToggleMic={toggleMic}
-                            onToggleCamera={toggleCamera}
-                            onLeaveRoom={handleLeaveRoom}
-                            isScreenSharing={isScreenSharing}
-                            onToggleScreenShare={toggleScreenShare}
-                        />
-                    </div>
-                )
-            ]}
-        />
+        <ContentComponent>
+            <PageInfo
+                title={`会议室 ${roomId}`}
+                desc={`在线人数: ${remoteParticipants.length + 1}`}
+            />
+            <Card className={styles.videoContainer}>
+                <VideoGrid
+                    participants={remoteParticipants}
+                    localParticipant={localParticipant}
+                />
+            </Card>
+            <div className={styles.controlBarWrapper}>
+                <ControlBar
+                    isMicOn={isMicOn}
+                    isCameraOn={isCameraOn}
+                    onToggleMic={toggleMic}
+                    onToggleCamera={toggleCamera}
+                    onLeaveRoom={handleLeaveRoom}
+                    isScreenSharing={isScreenSharing}
+                    onToggleScreenShare={toggleScreenShare}
+                />
+            </div>
+        </ContentComponent>
     )
 }
 

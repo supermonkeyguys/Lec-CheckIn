@@ -3,7 +3,7 @@ import { Card, Col, Row, Typography } from "antd";
 import React, { FC, useEffect } from "react";
 import styles from './RecordStat.module.scss'
 import { useCheckInStat } from "../../../../hooks/CheckIn/useCheckInStat";
-import { formatDuration } from "../utils";
+import { formatDuration } from "../utils/utils";
 
 const { Title, Text } = Typography
 

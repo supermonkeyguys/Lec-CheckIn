@@ -1,7 +1,7 @@
 {
   "name": "electron-checkin-lec",
   "type": "commonjs",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -10,7 +10,7 @@
       "output": "./dist",
       "app": "."
     },
-    "appId": "com.yourcompany.checkin",
+    "appId": "com.supermonkeyguys.leccheckin",
     "productName": "LecCheckIn",
     "win": {
       "target": "nsis",
@@ -24,7 +24,12 @@
       "out/**/*",
       "node_modules/**/*",
       "package.json"
-    ]
+    ],
+    "publish": {
+      "provider":"github",
+      "owner": "supermonkeyguys",
+      "repo": "Lec-CheckIn"
+    }
   },
   "homepage": "https://electron-vite.org",
   "scripts": {
