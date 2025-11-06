@@ -2,8 +2,8 @@ import path from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
-const devUrl = 'localhost'
-// const proUrl = '43.138.244.158'
+// const devUrl = 'localhost'
+const proUrl = '43.138.244.158'
 
 export default defineConfig({
   main: {
@@ -54,12 +54,12 @@ export default defineConfig({
       port: 5137,
       proxy: {
         '/api': {
-          target: `http://${devUrl}:8080`,
+          target: `http://${proUrl}:8080`,
           changeOrigin: true,
           secure: false
         },
         '/socket.io:': {
-          target: `http://${devUrl}:8080`,
+          target: `http://${proUrl}:8080`,
           changeOrigin: true,
           ws: true
         }

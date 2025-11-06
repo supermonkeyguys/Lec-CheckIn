@@ -2,11 +2,11 @@ import { message } from 'antd'
 import axios from 'axios'
 import { getTokenSession } from '../utils/use-Token'
 
-const devUrl = 'localhost'
-// const proUrl = '43.138.244.158'
+// const devUrl = 'localhost'
+const proUrl = '43.138.244.158'
 
 const instance = axios.create({
-  baseURL: `http://${devUrl}:8080/`,
+  baseURL: `http://${proUrl}:8080/`,
   timeout: 10 * 1000,
   headers: {}
 })

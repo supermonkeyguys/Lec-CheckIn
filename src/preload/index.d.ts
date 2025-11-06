@@ -16,17 +16,17 @@ declare global {
       removeWindow: (route: string) => void
       minimizeWindow: (route: string) => void
       setToken: (token: string, remember: boolean) => Promise<boolean>
-      getToken: (username:string) => Promise<any>
+      getToken: (username: string) => Promise<any>
       removeToken: () => Promise<boolean>
 
-      timerSync: (elapsed:number) => Promise<boolean>
+      timerSync: (elapsed: number) => Promise<boolean>
       timerStopReminder: () => Promise<boolean>
 
       userLogin: (payload: { token: string; username: string; remember: boolean }) => {
         success: boolean
         message?: string
       }
-      userLogout: (username:string) => Promise<boolean>
+      userLogout: (username: string) => Promise<boolean>
       setBackgroundVideo: (
         filePath: string
       ) => Promise<{ success: boolean; optimizedPath?: string; error?: string }>
@@ -46,6 +46,10 @@ declare global {
       getBgImageBuffer: () => Promise<any>
 
       checkTargetNetwork: () => Promise<boolean>
+
+      onUpdateAvailable: (cb: (version: string) => void) => () => void
+      onUpdateDownloaded: (cb: (version: string) => void) => () => void
+      installUpdate: () => void
     }
   }
 }

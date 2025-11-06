@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-const devUrl = 'localhost'
-// const proUrl = '43.138.244.158'
+// const devUrl = 'localhost'
+const proUrl = '43.138.244.158'
 
-const baseUrl = `http://${devUrl}:8080`
+const baseUrl = `http://${proUrl}:8080`
 
 export async function verifyToken(token:string): Promise<any>  {
     try {

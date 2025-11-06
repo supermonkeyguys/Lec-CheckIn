@@ -25,6 +25,12 @@ export interface SlotRollerHandle {
     stopRoll: () => void;
 }
 
+interface Prize {
+    message: string
+    type: string
+    value: number
+}
+
 const images = [
     "😀",
     "😍",
@@ -33,7 +39,7 @@ const images = [
 const ITEM_HEIGHT = 100
 const INFINITE_MULTIPLIER = 50
 const infiniteImages = Array(INFINITE_MULTIPLIER).fill(images).flat()
-const PRICE_ROLLER = 180
+const PRICE_ROLLER = 60
 const PRIZE_TIME = 30 * 60 * 1000
 const COST_TIME = 10 * 60 * 1000
 const PRIZE_POINTS = 210
@@ -160,6 +166,7 @@ const SlotMachine: FC<{
 
     const [isAnimation, setIsAnimation] = useState(false)
     const [results, setResults] = useState<(string | null)[]>([null, null, null])
+    const [prize, setPrize] = useState<Prize | null>(null)
     const [isWin, setIsWin] = useState(false)
     const { run: rollSlot, loading: slotLoading, slotData: slotResult } = useSlot()
 
@@ -204,45 +211,33 @@ const SlotMachine: FC<{
     useEffect(() => {
         console.log("slotRes: ", slotResult)
         if (slotResult && slotResult.results) {
-            console.log(1)
             setResults(slotResult.result)
+            setPrize(slotResult.prize)
             startRoll()
         }
     }, [slotResult])
 
 
-    const checkWin = (finalResults: string[]) => {
-        const [r1, r2, r3] = finalResults
+    const checkWin = () => {
 
-        if (r1 === r2 && r2 === r3) {
+        if (prize?.type !== null) {
             setIsWin(true)
-            if (r1 === "😀") {
-                message.success(`获得${formatDuration(PRIZE_TIME)}打卡时长! ! ! 😀`)
-            }
-            else if (r1 === "😍") {
-                message.success(`获得${PRIZE_POINTS}积分😍, 再来一次?`)
-            }
-            else {
-                message.success(`你的${formatDuration(COST_TIME)}分钟蒸发了🤣, 再来一次?`)
-            }
+            message.success(prize?.message)
 
-        } else if (r1 === r2 || r2 === r3 || r1 === r3) {
-            message.info('就差一点点, 再试一次?')
         } else {
-            message.info('有点倒霉')
+            message.success(prize?.message)
         }
     }
 
     useEffect(() => {
-        if(isAnimation)refresh()
-    },[isAnimation])
+        if (isAnimation) refresh()
+    }, [isAnimation])
 
     useEffect(() => {
         if (results.length === 3 && results.every(r => r !== null)) {
-            const finalResults = results as string[]
 
             if (!isWin) {
-                checkWin(finalResults)
+                checkWin()
             }
         }
     }, [results])

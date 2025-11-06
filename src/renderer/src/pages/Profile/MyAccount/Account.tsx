@@ -4,7 +4,6 @@ import Title from 'antd/es/typography/Title'
 import { FC, useEffect, useState } from 'react'
 import styles from './Account.module.scss'
 import { Item, ITEMS, RARITY_CONFIG } from '@renderer/pages/DrawCard/CsRoll/CsRoll'
-import { ResDataType } from '@renderer/services/ajax'
 import { useCardEffect } from '@renderer/hooks/DrawCard/useCard'
 import UserSelectorModal from '@renderer/components/UserSelectorModal/UserSelectorModal'
 
@@ -66,9 +65,14 @@ const Account: FC<AccountProps> = ({ refresh }) => {
         )
     }
 
-    const cardEntries = Object.entries(account).filter(([key]) =>
-        ['pointsCard', 'strikeCard', 'checkInCard', 'theftCard'].includes(key)
-    ) as ResDataType
+    const CARD_DISPLAY_ORDER = ['pointsCard', 'strikeCard', 'checkInCard', 'theftCard'] as const;
+
+    const cardEntries = CARD_DISPLAY_ORDER
+        .map(key => {
+            const count = account[key];
+            return count != null ? [key, count] : null;
+        })
+        .filter(Boolean) as [string, number][];
 
     return (
         <AntdCard>
@@ -86,6 +90,7 @@ const Account: FC<AccountProps> = ({ refresh }) => {
 
                         const rarityConfig = RARITY_CONFIG[item.rarity]
                         const isSelected = selectedCard?.cardType === cardKey
+                        console.log(cardKey)
 
                         return (
                             <div

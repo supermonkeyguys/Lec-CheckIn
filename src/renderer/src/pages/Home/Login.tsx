@@ -25,7 +25,6 @@ const Login: FC<PropsType> = ({ onSwitch }) => {
 
             setUsername(username)
             setTokenSession(token)
-            console.log(token)
             await window.electronAPI?.userLogin({token, username,remember})
 
             return res

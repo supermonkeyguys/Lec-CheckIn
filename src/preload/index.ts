@@ -7,7 +7,7 @@ const api = {
   openWindow: (route: string) => ipcRenderer.send('open-window', route),
   removeWindow: (route: string) => ipcRenderer.send('close-window', route),
   minimizeWindow: (route: string) => ipcRenderer.send('minimize-window', route),
-  timerSync: (elapsed: number) => ipcRenderer.invoke('timer-sync',elapsed),
+  timerSync: (elapsed: number) => ipcRenderer.invoke('timer-sync', elapsed),
   timerStopReminder: () => ipcRenderer.invoke('timer-stop-reminder'),
 
   userLogin: (credentials) => ipcRenderer.invoke('user-login', credentials),
@@ -26,7 +26,21 @@ const api = {
   getBgVideoBuffer: async () => ipcRenderer.invoke('get-background-video-buffer'),
   getBgImageBuffer: async () => ipcRenderer.invoke('get-background-image-buffer'),
 
-  checkTargetNetwork: async () => ipcRenderer.invoke('check-target-network')
+  checkTargetNetwork: async () => ipcRenderer.invoke('check-target-network'),
+
+  onUpdateAvailable: (callback: (version: string) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, version: string) => callback(version)
+    ipcRenderer.on('update-available', handler)
+    return () => ipcRenderer.removeListener('update-available', handler)
+  },
+
+  onUpdateDownloaded: (callback: (version: string) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, version: string) => callback(version)
+    ipcRenderer.on('update-downloaded', handler)
+    return () => ipcRenderer.removeListener('update-downloaded', handler)
+  },
+
+  installUpdate: () => ipcRenderer.send('install-update')
 }
 
 if (process.contextIsolated) {
