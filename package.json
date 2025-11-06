@@ -46,7 +46,7 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "exe-build": "npm run build && electron-builder --win"
+    "exe-build": "npm run build && electron-builder --win --publish=always"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
