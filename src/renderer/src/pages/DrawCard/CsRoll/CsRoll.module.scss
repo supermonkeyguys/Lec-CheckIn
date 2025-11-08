@@ -14,7 +14,7 @@
 }
 
 .title {
-  color: white;
+  color: black;
   margin: 0 0 15px 0;
   text-align: center;
   font-size: 24px;
@@ -28,7 +28,7 @@
   border: 2px solid;
   border-radius: 15px;
   background: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: black;
   font-size: 12px;
   margin: 0 5px;
 }
@@ -76,18 +76,6 @@
   &.winner {
     animation: winnerPulse 1s ease-in-out infinite;
   }
-}
-
-.itemIcon {
-  font-size: 60px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-
-.itemName {
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
-  color: #333;
 }
 
 .itemRarity {

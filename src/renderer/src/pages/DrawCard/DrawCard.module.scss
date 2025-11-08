@@ -1,6 +1,19 @@
-// DrawCard.module.scss
+.header {
+  margin-bottom: 20px;
+}
 
-// ===== 主容器 =====
+.title {
+  color: black;
+  margin: 0 0 15px 0;
+  text-align: center;
+  font-size: 24px;
+}
+
+.rule {
+  display: flex;
+  justify-content: center;
+}
+
 .slotMachine {
   padding: 40px 20px;
   text-align: center;
@@ -9,14 +22,13 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-// ===== 三个轮盘的容器 =====
 .rollers {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
   margin-bottom: 40px;
-  perspective: 1000px; // 3D效果
+  perspective: 1000px; 
 
   @media (max-width: 768px) {
     gap: 10px;
@@ -24,7 +36,6 @@
   }
 }
 
-// ===== 单个轮盘 =====
 .roller {
   position: relative;
   width: 120px;
@@ -48,17 +59,15 @@
   }
 }
 
-// ===== 滚动的图标列表 =====
 .imageList {
   position: absolute;
   width: 100%;
   top: 0;
   left: 0;
   will-change: transform;
-  transform: translateZ(0); // 开启硬件加速
+  transform: translateZ(0); 
 }
 
-// ===== 单个图标 =====
 .ywbg {
   height: 100px;
   display: flex;
@@ -75,7 +84,6 @@
   }
 }
 
-// ===== 上下渐变遮罩 =====
 .maskTop,
 .maskBottom {
   position: absolute;
@@ -110,7 +118,6 @@
   );
 }
 
-// ===== 中奖指示线 =====
 .pointer {
   position: absolute;
   left: -5px;
@@ -136,7 +143,6 @@
     border-style: solid;
   }
 
-  // 左侧箭头
   &::before {
     left: -15px;
     top: 50%;
@@ -145,7 +151,6 @@
     border-color: transparent #ff4d4f transparent transparent;
   }
 
-  // 右侧箭头
   &::after {
     right: -15px;
     top: 50%;
@@ -159,7 +164,6 @@
   }
 }
 
-// ===== 控制按钮区域 =====
 .controllers {
   display: flex;
   justify-content: center;
@@ -196,7 +200,6 @@
   }
 }
 
-// ===== 结果显示区域 =====
 .resultWrapper {
   display: flex;
   flex-direction: row;
@@ -235,7 +238,6 @@
   }
 }
 
-// ===== 中奖样式 =====
 .winTextWrapper {
     display: flex;
     align-items: center;
@@ -267,9 +269,6 @@
   box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
 }
 
-// ===== 动画定义 =====
-
-// 淡入上移
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -281,7 +280,6 @@
   }
 }
 
-// 弹出效果
 @keyframes popIn {
   0% {
     transform: scale(0);
@@ -296,7 +294,6 @@
   }
 }
 
-// 中奖脉冲
 @keyframes winPulse {
   0%,
   100% {
@@ -309,7 +306,6 @@
   }
 }
 
-// 弹跳
 @keyframes bounce {
   0%,
   100% {
@@ -320,7 +316,6 @@
   }
 }
 
-// 卡片抖动
 @keyframes cardShake {
   0%,
   100% {
@@ -341,7 +336,6 @@
   }
 }
 
-// 旋转（可选，用于加载状态）
 @keyframes rotate {
   from {
     transform: rotate(0deg);
@@ -351,7 +345,6 @@
   }
 }
 
-// ===== 额外特效：光晕效果 =====
 .roller::before {
   content: '';
   position: absolute;
@@ -384,7 +377,6 @@
   }
 }
 
-// ===== 加载状态指示器（可选）=====
 .loading {
   position: absolute;
   top: 50%;

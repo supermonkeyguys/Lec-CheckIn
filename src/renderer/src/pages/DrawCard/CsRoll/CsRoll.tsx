@@ -5,41 +5,13 @@ import { GiftOutlined } from "@ant-design/icons"
 import { useDrawCard } from "@renderer/hooks/DrawCard/useDrawCard"
 import { useCardEffect } from "@renderer/hooks/DrawCard/useCard"
 import UserSelectorModal from "@renderer/components/UserSelectorModal/UserSelectorModal"
-
-export interface Item {
-    id: string
-    name: string
-    icon: string
-    rarity: 'common' | 'rare' | 'epic' | 'legendary'
-    desc?: string
-    effect?: string
-    cardType: string
-}
-
-export const ITEMS: Item[] = [
-    { id: '1', name: '积分卡', icon: '😀', rarity: 'common', desc: "获得120积分", effect: 'self', cardType: 'pointsCard' },
-    { id: '2', name: '打压', icon: '🥊', rarity: 'rare', desc: '选择一位目标并减少其120积分', effect: 'other', cardType: 'strikeCard' },
-    {
-        id: '3', name: '加时卡', icon: '😇', rarity: 'epic',
-        desc: '选择一位目标并为其增加30分钟打卡时长', effect: 'other',
-        cardType: 'checkInCard'
-    },
-    {
-        id: '4', name: '神之一手', icon: '🥷', rarity: 'legendary',
-        desc: '选择一位目标并偷取其30分钟打卡时长(本周),并获取其60积分(结果可为负)', effect: 'other',
-        cardType: 'theftCard'
-    },
-]
-
-export const RARITY_CONFIG = {
-    common: { color: '#b0c3d9', label: '普通', weight: 60 },
-    rare: { color: '#4b69ff', label: '稀有', weight: 25 },
-    epic: { color: '#8847ff', label: '史诗', weight: 12 },
-    legendary: { color: '#ff8000', label: '传说', weight: 3 },
-}
+import { Item, ITEMS, LecCard, RARITY_CONFIG } from "@renderer/components/Card/LecCard"
 
 
-const Scroll:FC<{
+
+
+
+const Scroll: FC<{
     refresh: () => void
 }> = ({ refresh }) => {
     const containerRef = useRef<HTMLDivElement>(null)
@@ -150,9 +122,9 @@ const Scroll:FC<{
     }
 
     useEffect(() => {
-        if(winner)refresh()
-    },[winner])   
- 
+        if (winner) refresh()
+    }, [winner])
+
     return (
         <Card>
             <div className={styles.header}>
@@ -174,30 +146,21 @@ const Scroll:FC<{
             <div ref={viewportRef} className={styles.viewport}>
                 <div ref={containerRef} className={styles.itemsContainer}>
                     {infiniteItems.map((item, i) => (
-                        <Tooltip key={`tooltip-${i}`} title={item.desc}>
-                            <div
-                                key={`${item.id}-${i}`}
-                                className={`${styles.itemCard} 
+                        <div
+                            key={`${item.id}-${i}`}
+                            className={`${styles.itemCard} 
                                     ${winner?.id === item.id
-                                        && i === infiniteItems
-                                            .findIndex((it, idx) => it.id === item.id
-                                                && idx >= Math.floor(infiniteItems.length * 0.4)) ?
-                                        styles.winner : ''}
+                                    && i === infiniteItems
+                                        .findIndex((it, idx) => it.id === item.id
+                                            && idx >= Math.floor(infiniteItems.length * 0.4)) ?
+                                    styles.winner : ''}
                                 `}
-                                style={{
-                                    borderColor: RARITY_CONFIG[item.rarity].color,
-                                }}
-                            >
-                                <div className={styles.itemIcon}>{item.icon}</div>
-                                <div className={styles.itemName}>{item.name}</div>
-                                <div
-                                    className={styles.itemRarity}
-                                    style={{ backgroundColor: RARITY_CONFIG[item.rarity].color }}
-                                >
-                                    {RARITY_CONFIG[item.rarity].label}
-                                </div>
-                            </div>
-                        </Tooltip>
+                            style={{
+                                borderColor: RARITY_CONFIG[item.rarity].color,
+                            }}
+                        >
+                            <LecCard item={item} i={i} />
+                        </div>
                     ))}
                 </div>
                 <div className={styles.indicator}>
@@ -208,15 +171,17 @@ const Scroll:FC<{
             </div>
 
             <div className={styles.controls}>
-                <Button
-                    type="primary"
-                    size='large'
-                    disabled={isRolling}
-                    onClick={run}
-                    loading={isRolling}
-                >
-                    {isRolling ? '滚动中...' : '🎁 开始抽奖'}
-                </Button>
+                <Tooltip title='消耗180积分'>
+                    <Button
+                        type="primary"
+                        size='large'
+                        disabled={isRolling}
+                        onClick={run}
+                        loading={isRolling}
+                    >
+                        {isRolling ? '滚动中...' : '🎁 开始抽奖'}
+                    </Button>
+                </Tooltip>
             </div>
 
             {winner && (

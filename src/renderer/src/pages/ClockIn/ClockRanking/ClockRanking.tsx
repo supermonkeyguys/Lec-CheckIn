@@ -123,7 +123,6 @@ const RankCard: FC<{
     activeKey: string;
     dataSource: any[];
 }> = ({ activeKey, dataSource }) => {
-    console.log(dataSource)
     const columns = [
         {
             title: '排行',
@@ -172,7 +171,7 @@ const RankCard: FC<{
                 {activeKey === 'checkIn' ? '打卡时长' : '积分'}排行榜
             </Title>
             <Table
-                rowKey="userId"
+                rowKey='username'
                 dataSource={dataSource ?? []}
                 showHeader={true}
                 columns={columns}

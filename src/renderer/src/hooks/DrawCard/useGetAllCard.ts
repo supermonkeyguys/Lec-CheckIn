@@ -6,7 +6,7 @@ export function useGetAllCard() {
   const { run, data } = useRequest(
     async () => {
       const res = await getAllCard()
-
+      console.log("res:",res)
       return res
     },
     {

@@ -32,15 +32,10 @@ const ClockHeatmap: FC = () => {
 
     useEffect(() => {
         if (cachedData === null) {
-            console.log(1)
             run()
-        } 
+        }
         else if (!isRunning) {
-            console.log(2)
-            const timer = setTimeout(() => {
-                run()
-            }, 100)
-            return () => clearInterval(timer)
+            run()
         }
 
         return
@@ -62,7 +57,6 @@ const ClockHeatmap: FC = () => {
     const displayData = useMemo(() => {
         if (cachedData) return cachedData
         if (data) return processRawData(data)
-        console.log('step 3')
         return []
     }, [cachedData, data])
 

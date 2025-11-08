@@ -10,11 +10,15 @@ export function useSlot() {
   } = useRequest(
     async () => {
       const res = await useSlotMachine()
-      console.log(res)
+
       return res
     },
     {
       manual: true,
+      onSuccess(res) {
+        if(res.ok)message.success(res.message)
+        else message.error(res.message)
+      },
       onError(err) {
         message.error('抽奖失败：' + err.message)
       }

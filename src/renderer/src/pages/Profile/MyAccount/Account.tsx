@@ -1,20 +1,11 @@
 import { useGetAllCard } from '@renderer/hooks/DrawCard/useGetAllCard'
-import { Card as AntdCard, Button } from 'antd'
+import { Card as AntdCard, Button, Tooltip } from 'antd'
 import Title from 'antd/es/typography/Title'
 import { FC, useEffect, useState } from 'react'
 import styles from './Account.module.scss'
-import { Item, ITEMS, RARITY_CONFIG } from '@renderer/pages/DrawCard/CsRoll/CsRoll'
 import { useCardEffect } from '@renderer/hooks/DrawCard/useCard'
 import UserSelectorModal from '@renderer/components/UserSelectorModal/UserSelectorModal'
-
-
-const CARD_TYPE_TO_ITEM: Record<string, typeof ITEMS[number] | undefined> = {
-    pointsCard: ITEMS.find(item => item.name === '积分卡'),
-    strikeCard: ITEMS.find(item => item.name === '打压'),
-    checkInCard: ITEMS.find(item => item.name === '加时卡'),
-    theftCard: ITEMS.find(item => item.name === '神之一手'),
-};
-
+import { Item, ITEMS, LecCard, RARITY_CONFIG } from '@renderer/components/Card/LecCard'
 
 interface AccountProps {
     refresh: () => void
@@ -65,68 +56,58 @@ const Account: FC<AccountProps> = ({ refresh }) => {
         )
     }
 
-    const CARD_DISPLAY_ORDER = ['pointsCard', 'strikeCard', 'checkInCard', 'theftCard'] as const;
-
-    const cardEntries = CARD_DISPLAY_ORDER
-        .map(key => {
-            const count = account[key];
-            return count != null ? [key, count] : null;
-        })
-        .filter(Boolean) as [string, number][];
-
     return (
         <AntdCard>
             <Title level={3} style={{ margin: 0, marginBottom: '20px', textAlign: 'center' }}>
                 我的卡包
             </Title>
 
-            {cardEntries.length === 0 ? (
+            {ITEMS.length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#888' }}>暂无卡片</p>
             ) : (
                 <div className={styles.cardList}>
-                    {cardEntries.map(([cardKey, count], i) => {
-                        const item = CARD_TYPE_TO_ITEM[cardKey]
+                    {ITEMS.map((item, i) => {
+                        const cardKey = item.cardType
+                        const count = account[cardKey]
+                        console.log(`${cardKey}: `,count)
                         if (!item) return null;
 
                         const rarityConfig = RARITY_CONFIG[item.rarity]
                         const isSelected = selectedCard?.cardType === cardKey
-                        console.log(cardKey)
 
                         return (
-                            <div
+                            <Tooltip
                                 key={cardKey}
-                                className={`${styles.cardItem} ${isSelected ? styles.expanded : ''}`}
-                                style={{ borderColor: rarityConfig.color }}
-                                onClick={() => setSelectedCard(isSelected ? null : item)}
+                                title={item.desc}
                             >
-                                <div className={styles.icon}>{item.icon}</div>
-                                <div className={styles.name}>{item.name}</div>
                                 <div
-                                    className={styles.rarityTag}
-                                    style={{ backgroundColor: rarityConfig.color }}
+                                    key={cardKey}
+                                    className={`${styles.cardItem} ${isSelected ? styles.expanded : ''}`}
+                                    style={{ borderColor: rarityConfig.color }}
+                                    onClick={() => setSelectedCard(isSelected ? null : item)}
                                 >
-                                    {rarityConfig.label}
-                                </div>
-                                <div className={styles.count}>拥有数量：{count}</div>
+                                    <LecCard item={item} i={i} />
+                                    <div className={styles.count}>拥有数量：{count}</div>
 
-                                {selectedCard && i === Number(selectedCard.id) - 1 && (
-                                    <div className={styles.cardActions}>
-                                        <Button
-                                            type='primary'
-                                            style={{ backgroundColor: rarityConfig.color }}
-                                            size='large'
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                handleUseCard()
-                                            }}
-                                            disabled={!count}
-                                            className={styles.useCardButton}
-                                        >
-                                            使用卡片
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
+                                    {selectedCard && i === Number(selectedCard.id) - 1 && (
+                                        <div className={styles.cardActions}>
+                                            <Button
+                                                type='primary'
+                                                style={{ backgroundColor: rarityConfig.color }}
+                                                size='large'
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    handleUseCard()
+                                                }}
+                                                disabled={!count}
+                                                className={styles.useCardButton}
+                                            >
+                                                使用卡片
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            </Tooltip>
                         )
                     })}
                 </div>

@@ -9,9 +9,11 @@ export function useGetUserInfo() {
       return data
     },
     {
-      manual: true
+      manual: false
     }
   )
+
+
 
   return { userInfo, refreshGetInfo }
 }

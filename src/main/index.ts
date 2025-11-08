@@ -32,6 +32,10 @@ if (!gotTheLock) {
     }
   })
 
+  if(app.isPackaged) {
+    autoUpdater.checkForUpdates()
+  }
+
 
   app.whenReady().then(async () => {
     registerWindowHandlers()

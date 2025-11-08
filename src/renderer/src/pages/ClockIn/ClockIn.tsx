@@ -1,7 +1,7 @@
-import { CalendarOutlined, CaretRightOutlined, ClockCircleOutlined, MenuOutlined, RightOutlined, TrophyFilled, } from "@ant-design/icons";
+import { CaretRightOutlined, ClockCircleOutlined, MenuOutlined, RightOutlined, TrophyFilled, } from "@ant-design/icons";
 import { useCheckInStat } from "@renderer/hooks/CheckIn/useCheckInStat";
 import { useStartCheckIn } from "@renderer/hooks/CheckIn/useStartCheckIn";
-import { Button, Card, Col, Row, Space, Typography } from "antd";
+import { Button, Card, Col, message, Progress, ProgressProps, Row, Space, Typography } from "antd";
 import React, { FC, useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -12,16 +12,25 @@ import { STARTTIME_KEY, useTimer } from "../../hooks/CheckIn/useTimer";
 import { POINTS_PAGE_PATHNAME, RECORD_PAGE_PATHNAME } from "../../router/router";
 import styles from './ClockIn.module.scss';
 import ClockHeatmap from "./ClockRecord/ClockHeatMap";
-import { formatDuration } from "./ClockRecord/utils/utils";
+import { formatDuration, formatDurationNumber } from "./ClockRecord/utils/utils";
 import { formatTime } from "./utils";
+import { useGetUserInfo } from "@renderer/hooks/User/useGetUserInfo";
 
 const { Title, Text } = Typography
+
+const conicColors: ProgressProps['strokeColor'] = {
+    '0%': '#87d068',
+    '50%': '#ffe58f',
+    '100%': '#ffccc7',
+};
+
 
 const ClockStart: FC = React.memo(() => {
     const dispatch = useDispatch()
     const { submitCheckIn, loading } = useSubmitCheckIn()
     const { start, loadingStart } = useStartCheckIn()
     const { data, run, refresh } = useCheckInStat()
+    const { userInfo } = useGetUserInfo()
     const { weekHours = 0 } = data || {}
     const {
         currentTime,
@@ -34,7 +43,15 @@ const ClockStart: FC = React.memo(() => {
         run()
     }, [])
 
+    const target = userInfo?.grade === 'freshman' ? 28 : 38
+    const percent = ((formatDurationNumber(weekHours) / target) * 100).toFixed(1)
+
     const handleStartClock = useCallback(async () => {
+        if (!window.electronAPI?.checkTargetNetwork()) {
+            message.error('请在团队内打卡')
+            return
+        }
+
         try {
             await start()
             const local = localStorage.getItem(STARTTIME_KEY) || Date.now()
@@ -58,20 +75,22 @@ const ClockStart: FC = React.memo(() => {
     return (
         <>
             <Card className={styles.cardContainer}>
+
                 <ClockCircleOutlined style={{ fontSize: '32px', color: 'rgba(22, 119, 255)' }} />
                 <Title level={4} style={{ margin: '0' }}>Start CheckIn</Title>
-                <Text style={{ fontSize: 20, justifyContent: 'center' }}>
-                    <CalendarOutlined
+                <div className={styles.displayCheckIn}>
+                    <Progress
+                        type="dashboard"
+                        percent={Number(percent)}
+                        size={70}
                         style={{
-                            color: 'blue',
-                            width: '50px',
-                            height: '50px',
-                            justifyContent: 'center',
+                            marginRight: '20px'
                         }}
+                        strokeColor={conicColors}
                     />
                     <span><strong>本周打卡时长:  </strong></span>
-                    <span style={{ color: 'red' }}>{formatDuration(weekHours)}</span>
-                </Text>
+                    <span style={{ color: Number(percent) >= 100 ? 'green' : 'red' }}> &nbsp;{formatDuration(weekHours)}</span>
+                </div>
                 <Text style={{ margin: "0" }}>
                     {isRunning ? `打卡中...` : '未开始打卡'}
                 </Text>

@@ -11,7 +11,7 @@ function App(): React.JSX.Element {
 
     const removeUpdateAvailable = electronAPI.onUpdateAvailable((version) => {
       if (confirm(`发现新版本 v${version}，是否下载？`)) {
-        
+        console.log(`发现新版本 v${version}，是否下载？`)
       }
     })
 

@@ -3,8 +3,7 @@ import PageInfo from "@renderer/components/PageInfo";
 import { Button, Card, message, Tooltip, Typography } from "antd";
 import { FC, useRef, useState, forwardRef, useImperativeHandle, useEffect } from "react";
 import styles from './DrawCard.module.scss';
-import Title from "antd/es/typography/Title";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { CreditCardOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { useGetBalance } from "@renderer/hooks/Points/useGetBalance";
 import { formatDuration } from "../ClockIn/ClockRecord/utils/utils";
 import Scroll from "./CsRoll/CsRoll";
@@ -16,7 +15,6 @@ interface SlotRollerProps {
     onResult: (result: string) => void
     autoStopDelay: number
     stopDuration: number
-    rollerIndex: number
     targetResult: string
 }
 
@@ -39,13 +37,13 @@ const images = [
 const ITEM_HEIGHT = 100
 const INFINITE_MULTIPLIER = 50
 const infiniteImages = Array(INFINITE_MULTIPLIER).fill(images).flat()
-const PRICE_ROLLER = 60
+const PRICE_ROLLER = 30
 const PRIZE_TIME = 30 * 60 * 1000
 const COST_TIME = 10 * 60 * 1000
-const PRIZE_POINTS = 210
+const PRIZE_POINTS = 90
 
 const SlotRoller = forwardRef<SlotRollerHandle, SlotRollerProps>(
-    ({ onResult, autoStopDelay, stopDuration, rollerIndex, targetResult }, ref) => {
+    ({ onResult, autoStopDelay, stopDuration,targetResult }, ref) => {
         const rollerRef = useRef<HTMLDivElement>(null)
         const [isRolling, setIsRolling] = useState(false)
         const stopTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -129,7 +127,6 @@ const SlotRoller = forwardRef<SlotRollerHandle, SlotRollerProps>(
 
             stopTimeoutRef.current = setTimeout(() => {
                 onResult(finalResult)
-                console.log(`轮盘${rollerIndex + 1}停止: ${finalResult}`);
             }, stopDuration * 1000)
         }
 
@@ -211,7 +208,7 @@ const SlotMachine: FC<{
     useEffect(() => {
         console.log("slotRes: ", slotResult)
         if (slotResult && slotResult.results) {
-            setResults(slotResult.result)
+            setResults(slotResult.results)
             setPrize(slotResult.prize)
             startRoll()
         }
@@ -244,21 +241,23 @@ const SlotMachine: FC<{
 
     return (
         <Card className={isWin ? styles.winCard : ''}>
-            <div>
-                <Title style={{ margin: 0, marginBottom: '20px' }} level={3}>
-                    老虎机
-                </Title>
-                <span>
-                    抽奖规则
-                </span>
-                <Tooltip
-                    title={`三个相同即可触发效果, 
-                    😀为增加${formatDuration(PRIZE_TIME)}打卡时长;
-                    😍为获得${PRIZE_POINTS}积分;
-                    🤣为减少${formatDuration(COST_TIME)}打卡时长`}
-                >
-                    <QuestionCircleOutlined style={{ marginLeft: '10px' }} />
-                </Tooltip>
+            <div className={styles.header}>
+                <h2 className={styles.title}>
+                    <CreditCardOutlined /> 老虎机
+                </h2>
+                <div className={styles.rule}>
+                    <span>
+                        抽奖规则
+                    </span>
+                    <Tooltip
+                        title={`三个相同即可触发效果, 
+                        😀为增加${formatDuration(PRIZE_TIME)}打卡时长;
+                        😍为获得${PRIZE_POINTS}积分;
+                        🤣为减少${formatDuration(COST_TIME)}打卡时长`}
+                    >
+                        <QuestionCircleOutlined style={{ marginLeft: '10px' }} />
+                    </Tooltip>
+                </div>
             </div>
             <div className={styles.setMachine}>
                 <div className={styles.rollers}>
@@ -267,24 +266,21 @@ const SlotMachine: FC<{
                         onResult={(result) => handleResult(0, result)}
                         autoStopDelay={ROLLER_CONFIG[0].autoStopDelay}
                         stopDuration={ROLLER_CONFIG[0].stopDuration}
-                        rollerIndex={0}
-                        targetResult={results[0] || ''}
+                        targetResult={slotResult?.results[0] || ''}
                     />
                     <SlotRoller
                         ref={roller2Ref}
                         onResult={(result) => handleResult(1, result)}
                         autoStopDelay={ROLLER_CONFIG[1].autoStopDelay}
                         stopDuration={ROLLER_CONFIG[1].stopDuration}
-                        rollerIndex={1}
-                        targetResult={results[1] || ''}
+                        targetResult={slotResult?.results[1] || ''}
                     />
                     <SlotRoller
                         ref={roller3Ref}
                         onResult={(result) => handleResult(2, result)}
                         autoStopDelay={ROLLER_CONFIG[2].autoStopDelay}
                         stopDuration={ROLLER_CONFIG[2].stopDuration}
-                        rollerIndex={2}
-                        targetResult={results[2] || ''}
+                        targetResult={slotResult?.results[2] || ''}
                     />
                 </div>
 
