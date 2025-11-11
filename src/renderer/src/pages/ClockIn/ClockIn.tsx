@@ -2,7 +2,7 @@ import { CaretRightOutlined, ClockCircleOutlined, MenuOutlined, RightOutlined, T
 import { useCheckInStat } from "@renderer/hooks/CheckIn/useCheckInStat";
 import { useStartCheckIn } from "@renderer/hooks/CheckIn/useStartCheckIn";
 import { Button, Card, Col, message, Progress, ProgressProps, Row, Space, Typography } from "antd";
-import React, { FC, useCallback, useEffect } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ContentComponent from "../../components/ContentComponent/Component";
@@ -27,6 +27,7 @@ const conicColors: ProgressProps['strokeColor'] = {
 
 const ClockStart: FC = React.memo(() => {
     const dispatch = useDispatch()
+    const [isCheckIp, setIsCheckIp] = useState(false)
     const { submitCheckIn, loading } = useSubmitCheckIn()
     const { start, loadingStart } = useStartCheckIn()
     const { data, run, refresh } = useCheckInStat()
@@ -47,17 +48,21 @@ const ClockStart: FC = React.memo(() => {
     const percent = ((formatDurationNumber(weekHours) / target) * 100).toFixed(1)
 
     const handleStartClock = useCallback(async () => {
-        if (!window.electronAPI?.checkTargetNetwork()) {
-            message.error('请在团队内打卡')
-            return
-        }
-
+        setIsCheckIp(true)
         try {
+            const res = await window.electronAPI?.checkTargetNetwork()
+            if (!res) {
+                message.error('请在团队内打卡')
+                return
+            }
+
             await start()
             const local = localStorage.getItem(STARTTIME_KEY) || Date.now()
             startTimer(new Date(local).getTime())
         } catch (err) {
             console.error(err)
+        } finally {
+            setIsCheckIp(false)
         }
     }, [start, startTimer])
 
@@ -97,6 +102,7 @@ const ClockStart: FC = React.memo(() => {
                 <div className={styles.clockTime}>{formatTime(currentTime)}</div>
                 <Button
                     disabled={loading || loadingStart}
+                    loading={isCheckIp}
                     type="primary"
                     icon={<CaretRightOutlined />}
                     onClick={(isRunning ? handleStopClock : handleStartClock)}
