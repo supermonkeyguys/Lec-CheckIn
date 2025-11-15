@@ -1,0 +1,64 @@
+name: 前端 CI/CD
+
+on:
+  push:
+    branches: ['main'] # 可改为其他分支（如 dev）
+
+# 任务列表
+jobs:
+  # 第一个任务：构建和测试
+  build-and-test:
+    # 运行环境（GitHub 提供的虚拟机，可选 Ubuntu、Windows、macOS）
+    runs-on: ubuntu-latest
+
+    # 任务步骤
+    steps:
+      # 步骤1：拉取代码到 Runner
+      - name: 拉取代码
+        uses: actions/checkout@v4 # 官方提供的“拉取代码”动作
+
+      # 步骤2：安装 Node.js（根据项目版本指定）
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x # 匹配项目的 Node 版本
+
+      # 步骤3：安装依赖
+      - name: 安装依赖
+        run: npm install # 执行命令（可替换为 yarn/pnpm）
+
+      # 步骤4：运行测试（如果有测试脚本）
+      - name: 运行测试
+        run: npm test # 若无需测试，可删除此步骤
+
+      # 步骤5：构建项目
+      - name: 构建项目
+        run: npm run build # 生成静态文件（如 dist 目录）
+
+      # 步骤6：保存构建结果（供后续部署步骤使用）
+      - name: 缓存构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files # 缓存名称
+          path: dist/ # 需缓存的目录（根据项目实际输出修改）
+
+  # 第二个任务：部署到 GitHub Pages（依赖 build-and-test 任务成功完成）
+  deploy:
+    needs: build-and-test # 依赖关系：先执行 build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      # 步骤1：下载之前缓存的构建产物
+      - name: 下载构建产物
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files # 对应上一步的缓存名称
+          path: dist/ # 下载到当前 Runner 的 dist 目录
+
+      # 步骤2：部署到 GitHub Pages
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4 # 第三方部署动作（简化流程）
+        with:
+          # 部署权限：需要 GitHub 令牌（Token）
+          github_token: ${{ secrets.GITHUB_TOKEN }} # 内置 secrets，无需手动配置
+          publish_dir: ./dist # 部署的目录（静态文件所在路径）
