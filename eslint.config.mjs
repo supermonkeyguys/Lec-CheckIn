@@ -24,8 +24,21 @@ export default defineConfig(
       'react-refresh': eslintPluginReactRefresh
     },
     rules: {
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      // '@typescript-eslint/explicit-function-return-type': [
+      //   'error',
+      //   {
+      //     allowExpressions: true, 
+      //     allowTypedFunctionExpressions: true, 
+      //     allowHigherOrderFunctions: true, 
+      //     allowDirectConstAssertionInArrowFunctions: true
+      //   }
+      // ],
       ...eslintPluginReactHooks.configs.recommended.rules,
-      ...eslintPluginReactRefresh.configs.vite.rules
+      ...eslintPluginReactRefresh.configs.vite.rules,
+      
+      'react/display-name': 'off'
     }
   },
   eslintConfigPrettier

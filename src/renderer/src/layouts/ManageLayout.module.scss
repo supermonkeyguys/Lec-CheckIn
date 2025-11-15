@@ -5,6 +5,17 @@
   padding: 0;
   display: flex;
 
+  .sideBarWrapper {
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    height: auto;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
   .outletContainer {
     flex: 1;
     margin: 0 auto;

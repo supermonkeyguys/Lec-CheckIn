@@ -1,6 +1,8 @@
-// @renderer/components/ScreenPickerModal.tsx
 import { DesktopSource } from '@renderer/WebRTC/types/webrtc.types';
+import { Button, Space, Typography } from 'antd';
 import React, { useState, useEffect } from 'react';
+
+const { Text } = Typography;
 
 interface ScreenPickerModalProps {
   onClose: () => void;
@@ -17,11 +19,11 @@ export const ScreenPickerModal: React.FC<ScreenPickerModalProps> = ({
     loadSources();
   }, []);
 
-  const loadSources = async () => {
+  const loadSources = async (): Promise<void> => {
     try {
       const rawSources = await window.electronAPI?.getDesktopSources();
 
-      const formatted = rawSources
+      const formatted = rawSources;
       setSources(formatted);
     } catch (err) {
       console.error('加载屏幕源失败:', err);
@@ -32,9 +34,12 @@ export const ScreenPickerModal: React.FC<ScreenPickerModalProps> = ({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="screen-picker-modal" onClick={(e) => e.stopPropagation()}>
-        <h3>选择要共享的内容</h3>
+        <Space style={{ margin: '20px' }}>
+          <Text type="success">选择要共享的内容</Text>
+          <Button onClick={onClose}>取消</Button>
+        </Space>
         <div className="sources-grid">
-          {sources.map(source => (
+          {sources.map((source) => (
             <div
               key={source.id}
               className="source-item"
@@ -45,7 +50,6 @@ export const ScreenPickerModal: React.FC<ScreenPickerModalProps> = ({
             </div>
           ))}
         </div>
-        <button onClick={onClose}>取消</button>
       </div>
     </div>
   );
