@@ -1,6 +1,6 @@
 {
   "name": "electron-checkin-lec",
-  "type": "commonjs",
+  "type": "module",
   "version": "1.1.7",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
