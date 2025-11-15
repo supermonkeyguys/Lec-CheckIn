@@ -1,9 +1,9 @@
-import path from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
-import react from '@vitejs/plugin-react'
+import path from 'path';
+import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
+import react from '@vitejs/plugin-react';
 
 // const devUrl = 'localhost'
-const proUrl = '43.138.244.158'
+const proUrl = '43.138.244.158';
 
 export default defineConfig({
   main: {
@@ -14,41 +14,42 @@ export default defineConfig({
         output: {
           assetFileNames: 'assets/[name].[ext]',
           chunkFileNames: 'chunks/[name].js',
-          entryFileNames: '[name].js'
-        }
-      }
-    }
+          entryFileNames: '[name].js',
+        },
+      },
+    },
   },
   preload: {
     plugins: [
       externalizeDepsPlugin({
-        exclude: ['@electron-toolkit/preload']
-      })
+        exclude: ['@electron-toolkit/preload'],
+      }),
     ],
     build: {
-      outDir: 'out/preload/index.cjs',
+      outDir: 'out/preload',
       rollupOptions: {
         input: path.resolve(__dirname, 'src/preload/index.js'),
         output: {
           entryFileNames: 'index.js',
-          format: 'cjs'
-        }
-      }
-    }
+          format: 'cjs',
+          dir: 'out/preload',
+        },
+      },
+    },
   },
   renderer: {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src/renderer/src'),
-        '@renderer': path.resolve(__dirname, 'src/renderer/src')
-      }
+        '@renderer': path.resolve(__dirname, 'src/renderer/src'),
+      },
     },
     plugins: [react()],
     build: {
       outDir: 'out/renderer',
       rollupOptions: {
-        input: path.resolve(__dirname, 'src/renderer/index.html')
-      }
+        input: path.resolve(__dirname, 'src/renderer/index.html'),
+      },
     },
     server: {
       port: 5137,
@@ -56,14 +57,14 @@ export default defineConfig({
         '/api': {
           target: `http://${proUrl}:8080`,
           changeOrigin: true,
-          secure: false
+          secure: false,
         },
-        '/socket.io:': {
+        '/socket.io': {
           target: `http://${proUrl}:8080`,
           changeOrigin: true,
-          ws: true
-        }
-      }
-    }
-  }
-})
+          ws: true,
+        },
+      },
+    },
+  },
+});
