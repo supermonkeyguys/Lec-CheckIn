@@ -1,7 +1,7 @@
 {
   "name": "electron-checkin-lec",
   "type": "module",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -12,16 +12,6 @@
     },
     "appId": "com.supermonkeyguys.leccheckin",
     "productName": "LecCheckIn",
-    "win": {
-      "target": "nsis",
-      "icon": "build/icon.ico"
-    },
-    "mac": {
-      "hardenedRuntime": true,
-      "gatekeeperAssess": true,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
-    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
@@ -38,7 +28,15 @@
       "vPrefixedTagName": true
     },
     "electronUpdaterAware": true,
-    "generateUpdatesFilesForAllChannels": true
+    "generateUpdatesFilesForAllChannels": true,
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png"
+    }
   },
   "homepage": "https://electron-vite.org",
   "scripts": {
@@ -59,7 +57,6 @@
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux",
     "release:win": "npm run build && electron-builder --win --publish=always",
-    "release:mac": "npm run build && electron-builder --mac --publish=always",
     "release:linux": "npm run build && electron-builder --linux --publish=always",
     "prepare": "husky"
   },
