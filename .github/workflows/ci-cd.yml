@@ -45,8 +45,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist/*.exe
-            dist/*.AppImage
-            dist/latest.yml
+            dist/LecCheckIn\ Setup\ *.exe          # ✅ 匹配所有带空格的 .exe 文件
+            dist/LecCheckIn\ Setup\ *.exe.blockmap # ✅ 匹配 blockmap 文件
+            dist/latest.yml                       # ✅ 自动更新必需
           generate_release_notes: true
           token: ${{ secrets.GITHUB_TOKEN }}
