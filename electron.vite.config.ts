@@ -30,7 +30,7 @@ export default defineConfig({
       rollupOptions: {
         input: path.resolve(__dirname, 'src/preload/index.js'),
         output: {
-          entryFileNames: 'index.js',
+          entryFileNames: 'index.cjs',
           format: 'cjs',
           dir: 'out/preload',
         },

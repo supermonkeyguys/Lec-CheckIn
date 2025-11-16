@@ -1,7 +1,7 @@
 {
   "name": "electron-checkin-lec",
   "type": "module",
-  "version": "1.1.8",
+  "version": "1.2.2",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -21,21 +21,10 @@
       "node_modules/**/*",
       "package.json"
     ],
-    "publish": {
-      "provider": "github",
-      "owner": "supermonkeyguys",
-      "repo": "Lec-CheckIn",
-      "vPrefixedTagName": true
-    },
-    "electronUpdaterAware": true,
     "generateUpdatesFilesForAllChannels": true,
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "build/icon.png"
     }
   },
   "homepage": "https://electron-vite.org",
@@ -57,7 +46,6 @@
     "build:mac": "npm run build && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux",
     "release:win": "npm run build && electron-builder --win --publish=always",
-    "release:linux": "npm run build && electron-builder --linux --publish=always",
     "prepare": "husky"
   },
   "lint-staged": {
