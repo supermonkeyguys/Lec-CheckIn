@@ -41,24 +41,3 @@ jobs:
         with:
           name: build-files # 缓存名称
           path: out/ # 需缓存的目录（根据项目实际输出修改）
-
-  # 第二个任务：部署到 GitHub Pages（依赖 build-and-test 任务成功完成）
-  deploy:
-    needs: build-and-test # 依赖关系：先执行 build-and-test
-    runs-on: ubuntu-latest
-
-    steps:
-      # 步骤1：下载之前缓存的构建产物
-      - name: 下载构建产物
-        uses: actions/download-artifact@v4
-        with:
-          name: build-files # 对应上一步的缓存名称
-          path: out/ # 下载到当前 Runner 的 dist 目录
-
-      # 步骤2：部署到 GitHub Pages
-      - name: 部署到 GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4 # 第三方部署动作（简化流程）
-        with:
-          # 部署权限：需要 GitHub 令牌（Token）
-          github_token: ${{ secrets.GITHUB_TOKEN }} # 内置 secrets，无需手动配置
-          publish_dir: ./dist # 部署的目录（静态文件所在路径）
