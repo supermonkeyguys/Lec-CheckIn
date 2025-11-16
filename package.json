@@ -16,6 +16,12 @@
       "target": "nsis",
       "icon": "build/icon.ico"
     },
+    "mac": {
+      "hardenedRuntime": true,
+      "gatekeeperAssess": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
@@ -28,8 +34,11 @@
     "publish": {
       "provider": "github",
       "owner": "supermonkeyguys",
-      "repo": "Lec-CheckIn"
-    }
+      "repo": "Lec-CheckIn",
+      "vPrefixedTagName": true
+    },
+    "electronUpdaterAware": true,
+    "generateUpdatesFilesForAllChannels": true
   },
   "homepage": "https://electron-vite.org",
   "scripts": {
@@ -47,9 +56,11 @@
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
-    "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux",
-    "exe-build": "npm run build && electron-builder --win --publish=always",
+    "build:mac": "npm run build && electron-builder --mac",
+    "build:linux": "npm run build && electron-builder --linux",
+    "release:win": "npm run build && electron-builder --win --publish=always",
+    "release:mac": "npm run build && electron-builder --mac --publish=always",
+    "release:linux": "npm run build && electron-builder --linux --publish=always",
     "prepare": "husky"
   },
   "lint-staged": {

@@ -1,43 +1,52 @@
-name: 前端 CI/CD
+name: Electron CI/CD
 
 on:
   push:
-    branches: ['main'] # 可改为其他分支（如 dev）
+    tags: ['v*'] # 只有打 tag 时才触发发布
 
-# 任务列表
 jobs:
-  # 第一个任务：构建和测试
-  build-and-test:
-    # 运行环境（GitHub 提供的虚拟机，可选 Ubuntu、Windows、macOS）
-    runs-on: ubuntu-latest
+  build-and-release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest] # 移除 macos-latest
 
-    # 任务步骤
     steps:
-      # 步骤1：拉取代码到 Runner
       - name: 拉取代码
-        uses: actions/checkout@v4 # 官方提供的“拉取代码”动作
+        uses: actions/checkout@v4
 
-      # 步骤2：安装 Node.js（根据项目版本指定）
       - name: 安装 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x # 匹配项目的 Node 版本
+          node-version: 18.x
 
-      # 步骤3：安装依赖
+      - name: 安装 Linux 依赖
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2
+
       - name: 安装依赖
-        run: npm install # 执行命令（可替换为 yarn/pnpm）
+        run: npm ci
 
-      # 步骤4：运行测试（如果有测试脚本）
-      - name: 运行测试
-        run: npm test # 若无需测试，可删除此步骤
-
-      # 步骤5：构建项目
       - name: 构建项目
         run: npm run build
 
-      # 步骤6：保存构建结果（供后续部署步骤使用）
-      - name: 缓存构建产物
-        uses: actions/upload-artifact@v4
+      - name: 打包 Electron 应用
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            npm run release:win
+          else
+            npm run release:linux
+          fi
+        shell: bash
+
+      - name: 上传安装包到 GitHub Releases
+        uses: softprops/action-gh-release@v1
         with:
-          name: build-files # 缓存名称
-          path: out/ # 需缓存的目录（根据项目实际输出修改）
+          files: |
+            dist/*.exe
+            dist/*.AppImage
+            dist/latest.yml
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
